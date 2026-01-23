@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="action_open_parte" model="ir.actions.act_window">
+        <field name="name">Partes</field>
+        <field name="res_model">parte</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_open_profesor" model="ir.actions.act_window">
+        <field name="name">Profesores</field>
+        <field name="res_model">profesor</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_open_alumno" model="ir.actions.act_window">
+        <field name="name">Alumnos</field>
+        <field name="res_model">alumno</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_open_asignatura" model="ir.actions.act_window">
+        <field name="name">Asignaturas</field>
+        <field name="res_model">asignatura</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_open_grupo" model="ir.actions.act_window">
+        <field name="name">Grupos</field>
+        <field name="res_model">grupo</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_principal" name="Partes de Incidentes"/>
+    <menuitem id="menu_horizontal1" name="Partes" parent="menu_principal"/>
+    <menuitem id="menu_horizontal2" name="Profesores" parent="menu_principal"/>
+    <menuitem id="menu_horizontal3" name="Alumnos" parent="menu_principal"/>
+    <menuitem id="menu_horizontal4" name="Asignaturas" parent="menu_principal"/>
+    <menuitem id="menu_horizontal5" name="Grupos" parent="menu_principal"/>
+
+    <menuitem id="menu_vertical_parte" name="Partes" parent="menu_horizontal1" action="action_open_parte"/>
+    <menuitem id="menu_vertical_profesor" name="Profesores" parent="menu_horizontal2" action="action_open_profesor"/>
+    <menuitem id="menu_vertical_alumno" name="Alumnos" parent="menu_horizontal3" action="action_open_alumno"/>
+    <menuitem id="menu_vertical_asignatura" name="Asignaturas" parent="menu_horizontal4" action="action_open_asignatura"/>
+    <menuitem id="menu_vertical_grupo" name="Grupos" parent="menu_horizontal5" action="action_open_grupo"/>
+
+</odoo>
