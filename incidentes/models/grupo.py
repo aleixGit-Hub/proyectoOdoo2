@@ -1,5 +1,7 @@
-from odoo import fields, models, api
+from odoo import fields, models
 
 class Grupo(models.Model):
     _name = 'grupo'
-    name = fields.Char()
+    _description = 'Grupo'
+
+    name = fields.Char(string='Nombre del grupo', required=True)

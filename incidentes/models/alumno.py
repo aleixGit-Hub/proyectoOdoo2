@@ -1,8 +1,8 @@
-from odoo import fields, models, api
+from odoo import models, fields
 
 class Alumno(models.Model):
     _name = 'alumno'
-    name = fields.Char()
+    _description = 'Alumno'
 
-    _nia = 'Número de Identificación del Alumno'
-    nia = fields.Char()
+    name = fields.Char(string='Nombre', required=True)
+    grupo_id = fields.Many2one('grupo', string='Grupo')  

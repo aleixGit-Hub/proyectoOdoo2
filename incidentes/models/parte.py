@@ -1,29 +1,36 @@
-from odoo import fields, models, api
+from odoo import fields, models
 
 class Parte(models.Model):
     _name = 'parte'
-    name = fields.Char()
+    _description = 'Modelo para gestionar partes de incidentes'
 
-    _descripcion = 'Modelo para gestionar partes de incidentes'
-    descripcion = fields.Char()
+    name = fields.Char(string='Nombre', required=True)
 
-    _lugar = 'Lugar del incidente'
-    lugar = fields.Char()
+    descripcion = fields.Char(string='Descripción')
+    lugar = fields.Char(string='Lugar del incidente')
+    observaciones = fields.Char(string='Observaciones adicionales')
 
-    _observaciones = 'Observaciones adicionales'
-    observaciones = fields.Char()
+    estado = fields.Selection(
+        [
+            ('procesado', 'Procesado'),
+            ('en_proceso', 'En proceso')
+        ],
+        string='Estado',
+        default='en_proceso'
+    )
 
-    _estado = 'Estado del parte'
-    estado = fields.Selection([
-        ('procesado', 'Procesado'),
-        ('en_proceso', 'En Proceso')
-    ], default='en_proceso')
+    motivo_sancion = fields.Char(string='Motivo de la sanción')
 
-    _motivo_sancion = 'Motivo de la sanción'
-    motivo_sancion = fields.Char()
+    fecha_hora = fields.Datetime(
+        string='Fecha y hora',
+        default=fields.Datetime.now
+    )
 
-    _fecha_hora = 'Fecha y hora del incidente'
-    fecha_hora = fields.Datetime()
+    testigos = fields.Char(string='Testigos del incidente')
 
-    _testigos = 'Testigos del incidente'
-    testigos = fields.Char()
+    grupo_id = fields.Many2one(
+        'grupo',
+        string='Grupo',
+        required=True
+    )
+    

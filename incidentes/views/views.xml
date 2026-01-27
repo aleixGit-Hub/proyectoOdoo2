@@ -1,26 +1,13 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <!-- ============================================ -->
+    <!-- ACCIONES -->
+    <!-- ============================================ -->
+    
     <record id="action_open_parte" model="ir.actions.act_window">
         <field name="name">Partes</field>
         <field name="res_model">parte</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <record id="action_open_profesor" model="ir.actions.act_window">
-        <field name="name">Profesores</field>
-        <field name="res_model">profesor</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <record id="action_open_alumno" model="ir.actions.act_window">
-        <field name="name">Alumnos</field>
-        <field name="res_model">alumno</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <record id="action_open_asignatura" model="ir.actions.act_window">
-        <field name="name">Asignaturas</field>
-        <field name="res_model">asignatura</field>
         <field name="view_mode">tree,form</field>
     </record>
 
@@ -30,17 +17,200 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_principal" name="Partes de Incidentes"/>
-    <menuitem id="menu_horizontal1" name="Partes" parent="menu_principal"/>
-    <menuitem id="menu_horizontal2" name="Profesores" parent="menu_principal"/>
-    <menuitem id="menu_horizontal3" name="Alumnos" parent="menu_principal"/>
-    <menuitem id="menu_horizontal4" name="Asignaturas" parent="menu_principal"/>
-    <menuitem id="menu_horizontal5" name="Grupos" parent="menu_principal"/>
+    <record id="action_open_alumno" model="ir.actions.act_window">
+        <field name="name">Alumnos</field>
+        <field name="res_model">alumno</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 
-    <menuitem id="menu_vertical_parte" name="Partes" parent="menu_horizontal1" action="action_open_parte"/>
-    <menuitem id="menu_vertical_profesor" name="Profesores" parent="menu_horizontal2" action="action_open_profesor"/>
-    <menuitem id="menu_vertical_alumno" name="Alumnos" parent="menu_horizontal3" action="action_open_alumno"/>
-    <menuitem id="menu_vertical_asignatura" name="Asignaturas" parent="menu_horizontal4" action="action_open_asignatura"/>
-    <menuitem id="menu_vertical_grupo" name="Grupos" parent="menu_horizontal5" action="action_open_grupo"/>
+    <record id="action_open_profesor" model="ir.actions.act_window">
+        <field name="name">Profesores</field>
+        <field name="res_model">profesor</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_open_asignatura" model="ir.actions.act_window">
+        <field name="name">Asignaturas</field>
+        <field name="res_model">asignatura</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- ============================================ -->
+    <!-- VISTAS TREE -->
+    <!-- ============================================ -->
+    
+    <!-- VISTA TREE PARTES -->
+    <record id="view_parte_tree" model="ir.ui.view">
+        <field name="name">parte.tree</field>
+        <field name="model">parte</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="fecha_hora"/>
+                <field name="grupo_id"/>
+                <field name="estado"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- VISTA TREE GRUPO -->
+    <record id="view_grupo_tree" model="ir.ui.view">
+        <field name="name">grupo.tree</field>
+        <field name="model">grupo</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- VISTA TREE ALUMNO -->
+    <record id="view_alumno_tree" model="ir.ui.view">
+        <field name="name">alumno.tree</field>
+        <field name="model">alumno</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="grupo_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- VISTA TREE PROFESOR -->
+    <record id="view_profesor_tree" model="ir.ui.view">
+        <field name="name">profesor.tree</field>
+        <field name="model">profesor</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="dni"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- VISTA TREE ASIGNATURA -->
+    <record id="view_asignatura_tree" model="ir.ui.view">
+        <field name="name">asignatura.tree</field>
+        <field name="model">asignatura</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <!-- ============================================ -->
+    <!-- VISTAS FORM -->
+    <!-- ============================================ -->
+    
+    <!-- VISTA FORM PARTES -->
+    <record id="view_parte_form" model="ir.ui.view">
+        <field name="name">parte.form</field>
+        <field name="model">parte</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="grupo_id"/>
+                        <field name="fecha_hora"/>
+                        <field name="estado"/>
+                    </group>
+
+                    <group>
+                        <field name="descripcion"/>
+                        <field name="lugar"/>
+                        <field name="motivo_sancion"/>
+                        <field name="testigos"/>
+                        <field name="observaciones"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- VISTA FORM GRUPO -->
+    <record id="view_grupo_form" model="ir.ui.view">
+        <field name="name">grupo.form</field>
+        <field name="model">grupo</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- VISTA FORM ALUMNO -->
+    <record id="view_alumno_form" model="ir.ui.view">
+        <field name="name">alumno.form</field>
+        <field name="model">alumno</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="grupo_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- VISTA FORM PROFESOR -->
+    <record id="view_profesor_form" model="ir.ui.view">
+        <field name="name">profesor.form</field>
+        <field name="model">profesor</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="dni"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- VISTA FORM ASIGNATURA -->
+    <record id="view_asignatura_form" model="ir.ui.view">
+        <field name="name">asignatura.form</field>
+        <field name="model">asignatura</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- ============================================ -->
+    <!-- MENÚS -->
+    <!-- ============================================ -->
+    
+    <menuitem id="menu_principal" name="Partes de Incidentes"/>
+    <menuitem id="menu_partes" name="Partes" parent="menu_principal" action="action_open_parte"/>
+    <menuitem id="menu_grupos" name="Grupos" parent="menu_principal" action="action_open_grupo"/>
+    <menuitem id="menu_alumnos" name="Alumnos" parent="menu_principal" action="action_open_alumno"/>
+    <menuitem id="menu_profesor" name="Profesor" parent="menu_principal" action="action_open_profesor"/>
+    <menuitem id="menu_asignatura" name="Asignatura" parent="menu_principal" action="action_open_asignatura"/>
 
 </odoo>
