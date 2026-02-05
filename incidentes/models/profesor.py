@@ -1,8 +1,9 @@
-from odoo import fields, models, api
+from odoo import fields, models
 
 class Profesor(models.Model):
     _name = 'profesor'
-    name = fields.Char()
+    _description = 'Ficha del Profesor'
 
-    _dni = 'Documento Nacional de Identidad'
-    dni = fields.Char()
+    # Datos básicos del docente
+    name = fields.Char(string="Nombre completo", required=True)
+    dni = fields.Char(string="DNI / Identificación")

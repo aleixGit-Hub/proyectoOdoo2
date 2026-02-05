@@ -1,5 +1,7 @@
-from odoo import fields, models, api
+from odoo import fields, models
 
 class Asignatura(models.Model):
     _name = 'asignatura'
-    name = fields.Char()
+    _description = 'Asignaturas'
+
+    name = fields.Char(string='Nombre de la asignatura', required=True)
