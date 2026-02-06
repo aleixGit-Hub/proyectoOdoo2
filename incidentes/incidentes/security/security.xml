@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.module.category" id="module_category_partes">
+            <field name="name">Gestión de Incidentes</field>
+            <field name="description">Niveles de acceso para los partes</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="group_parte_alumno" model="res.groups">
+            <field name="name">Alumno</field>
+            <field name="category_id" ref="module_category_partes"/>
+        </record>
+
+        <record id="group_parte_profesor" model="res.groups">
+            <field name="name">Profesor</field>
+            <field name="category_id" ref="module_category_partes"/>
+            <field name="implied_ids" eval="[(4, ref('group_parte_alumno'))]"/>
+        </record>
+
+        <record id="group_parte_manager" model="res.groups">
+            <field name="name">Responsable de Convivencia (Admin)</field>
+            <field name="category_id" ref="module_category_partes"/>
+            <field name="implied_ids" eval="[(4, ref('group_parte_profesor'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+    </data>
+</odoo>
