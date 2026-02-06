@@ -4,4 +4,4 @@ class Asignatura(models.Model):
     _name = 'asignatura'
     _description = 'Asignaturas'
 
-    name = fields.Char(string='Nombre de la asignatura', required=True)
+    name = fields.Char(string='Nombre de la materia', required=True)
