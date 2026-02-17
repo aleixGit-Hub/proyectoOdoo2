@@ -1,8 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_parte_alumno,parte.alumno,model_parte,group_parte_alumno,1,0,0,0
-access_parte_profesor,parte.profesor,model_parte,group_parte_profesor,1,1,1,0
-access_parte_manager,parte.manager,model_parte,group_parte_manager,1,1,1,1
-access_alumno_user,alumno.user,model_alumno,base.group_user,1,1,1,1
-access_profesor_user,profesor.user,model_profesor,base.group_user,1,1,1,1
-access_grupo_user,grupo.user,model_grupo,base.group_user,1,1,1,1
-access_asignatura_user,asignatura.user,model_asignatura,base.group_user,1,1,1,1

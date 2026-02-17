@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ====================================================================
+         ACCIÓN DE INFORME – Informe individual de parte
+    ==================================================================== -->
+    <record id="action_report_parte_individual" model="ir.actions.report">
+        <field name="name">Informe de Parte</field>
+        <field name="model">parte</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">incidentes.report_parte_individual</field>
+        <field name="report_file">incidentes.report_parte_individual</field>
+        <field name="binding_model_id" ref="model_parte"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ====================================================================
+         ACCIÓN DE INFORME – Resumen de partes por alumno
+    ==================================================================== -->
+    <record id="action_report_partes_alumno" model="ir.actions.report">
+        <field name="name">Historial de Partes del Alumno</field>
+        <field name="model">parte</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">incidentes.report_partes_alumno</field>
+        <field name="report_file">incidentes.report_partes_alumno</field>
+        <field name="binding_model_id" ref="model_parte"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+
+    <!-- ====================================================================
+         TEMPLATE QWeb – Informe individual de UN PARTE
+    ==================================================================== -->
+    <template id="report_parte_individual">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="parte">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <h2 class="text-primary">
+                                    <strong>PARTE DE INCIDENCIA</strong>
+                                </h2>
+                                <h4 class="text-muted">
+                                    Referencia: <t t-esc="parte.name"/>
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div t-if="parte.tiene_expulsion"
+                             class="alert alert-danger text-center mb-3"
+                             style="border: 3px solid #dc3545; border-radius: 8px;">
+                            <h3 class="text-danger mb-0">
+                                  ESTE PARTE CONLLEVA EXPULSIÓN  
+                            </h3>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <table class="table table-bordered table-sm">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th colspan="2" class="text-center bg-primary text-white">
+                                                📋 Datos del Incidente
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Fecha y hora</strong></td>
+                                            <td><t t-esc="parte.fecha_hora" t-options='{"widget": "datetime"}'/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Ubicación</strong></td>
+                                            <td><t t-esc="dict(parte._fields['ubicacion'].selection).get(parte.ubicacion, '')"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Profesor</strong></td>
+                                            <td><t t-esc="parte.profesor_id.name"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Asignatura</strong></td>
+                                            <td><t t-esc="parte.asignatura_id.name or '—'"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Estado actual</strong></td>
+                                            <td><t t-esc="dict(parte._fields['estado'].selection).get(parte.estado, '')"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="col-6">
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2" class="text-center bg-warning text-dark">
+                                                👤 Datos del Alumno
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Alumno</strong></td>
+                                            <td><t t-esc="parte.alumno_id.name"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Grupo</strong></td>
+                                            <td><t t-esc="parte.grupo_id.name"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Tutor</strong></td>
+                                            <td><t t-esc="parte.alumno_id.tutor_id.name or '—'"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Testigos</strong></td>
+                                            <td><t t-esc="parte.testigos or '—'"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Estado llamada</strong></td>
+                                            <td>
+                                                <t t-esc="dict(parte._fields['gravedad'].selection).get(parte.gravedad, '')"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-secondary text-white">
+                                        <strong>📝 Relato de los hechos</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <p t-if="parte.descripcion">
+                                            <t t-esc="parte.descripcion"/>
+                                        </p>
+                                        <p t-else="" class="text-muted font-italic">
+                                            Sin descripción registrada.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div t-if="parte.observaciones" class="row mb-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        <strong>🛡️ Medidas cautelares / Observaciones</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div t-raw="parte.observaciones"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <div style="border-top: 1px solid #333; padding-top: 8px; margin-top: 60px;">
+                                    <p><strong>Firma del Profesor</strong></p>
+                                    <p class="text-muted small"><t t-esc="parte.profesor_id.name"/></p>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div style="border-top: 1px solid #333; padding-top: 8px; margin-top: 60px;">
+                                    <p><strong>Firma del Responsable de Convivencia</strong></p>
+                                    <p class="text-muted small">&#160;</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12 text-right text-muted small">
+                                Generado el <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+    <!-- ====================================================================
+         TEMPLATE QWeb – Historial de partes de UN ALUMNO
+    ==================================================================== -->
+    <template id="report_partes_alumno">
+        <t t-call="web.html_container">
+            <t t-set="alumnos" t-value="docs.mapped('alumno_id')"/>
+            <t t-foreach="alumnos" t-as="alumno">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <h2 class="text-primary">
+                                    <strong>HISTORIAL DE PARTES</strong>
+                                </h2>
+                                <h3><t t-esc="alumno.name"/></h3>
+                                <p class="text-muted">
+                                    Grupo: <strong><t t-esc="alumno.grupo_id.name or '—'"/></strong>
+                                    &#160;|&#160;
+                                    Tutor: <strong><t t-esc="alumno.tutor_id.name or '—'"/></strong>
+                                </p>
+                            </div>
+                        </div>
+
+                        <t t-set="partes_alumno" t-value="docs.filtered(lambda p: p.alumno_id == alumno)"/>
+                        <div class="row mb-3">
+                            <div class="col-3 text-center">
+                                <div class="card bg-light">
+                                    <div class="card-body p-2">
+                                        <h4><t t-esc="len(partes_alumno)"/></h4>
+                                        <small>Total partes</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 text-center">
+                                <div class="card bg-warning">
+                                    <div class="card-body p-2">
+                                        <h4><t t-esc="len(partes_alumno.filtered(lambda p: p.gravedad == 'pendiente'))"/></h4>
+                                        <small>Pendientes</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 text-center">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body p-2">
+                                        <h4><t t-esc="len(partes_alumno.filtered(lambda p: p.gravedad == 'completado'))"/></h4>
+                                        <small>Completados</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 text-center">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body p-2">
+                                        <h4><t t-esc="len(partes_alumno.filtered(lambda p: p.tiene_expulsion))"/></h4>
+                                        <small>Con expulsión</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-striped table-bordered table-sm mt-3">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Referencia</th>
+                                    <th>Fecha</th>
+                                    <th>Ubicación</th>
+                                    <th>Profesor</th>
+                                    <th>Estado llamada</th>
+                                    <th>Estado parte</th>
+                                    <th class="text-center">Expulsión</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="partes_alumno" t-as="p">
+                                    <tr t-attf-class="#{p.tiene_expulsion and 'table-danger' or ''}">
+                                        <td><t t-esc="p.name"/></td>
+                                        <td><t t-esc="p.fecha_hora" t-options='{"widget": "date"}'/></td>
+                                        <td><t t-esc="dict(p._fields['ubicacion'].selection).get(p.ubicacion, '')"/></td>
+                                        <td><t t-esc="p.profesor_id.name"/></td>
+                                        <td><t t-esc="dict(p._fields['gravedad'].selection).get(p.gravedad, '')"/></td>
+                                        <td><t t-esc="dict(p._fields['estado'].selection).get(p.estado, '')"/></td>
+                                        <td class="text-center">
+                                            <t t-if="p.tiene_expulsion">🚨</t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row mt-4">
+                            <div class="col-12 text-right text-muted small">
+                                Informe generado el <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

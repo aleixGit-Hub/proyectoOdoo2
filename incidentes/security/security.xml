@@ -1,27 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!-- ================================================================
+             CATEGORÍA DEL MÓDULO
+        ================================================================ -->
         <record model="ir.module.category" id="module_category_partes">
             <field name="name">Gestión de Incidentes</field>
-            <field name="description">Niveles de acceso para los partes</field>
+            <field name="description">Niveles de acceso para los partes de incidencias</field>
             <field name="sequence">10</field>
         </record>
 
-        <record id="group_parte_alumno" model="res.groups">
-            <field name="name">Alumno</field>
+        <!-- ================================================================
+             GRUPO: TUTOR
+             – Solo puede ver los partes que le afecten.
+        ================================================================ -->
+        <record id="group_parte_tutor" model="res.groups">
+            <field name="name">Tutor</field>
             <field name="category_id" ref="module_category_partes"/>
         </record>
 
+        <!-- ================================================================
+             GRUPO: PROFESOR
+             – Puede crear y ver SUS PROPIOS partes. No puede borrar.
+        ================================================================ -->
         <record id="group_parte_profesor" model="res.groups">
             <field name="name">Profesor</field>
             <field name="category_id" ref="module_category_partes"/>
-            <field name="implied_ids" eval="[(4, ref('group_parte_alumno'))]"/>
+            <field name="implied_ids" eval="[(4, ref('incidentes.group_parte_tutor'))]"/>
         </record>
 
+        <!-- ================================================================
+             GRUPO: RESPONSABLE DE CONVIVENCIA (MANAGER / ADMIN)
+             – Acceso total.
+        ================================================================ -->
         <record id="group_parte_manager" model="res.groups">
             <field name="name">Responsable de Convivencia (Admin)</field>
             <field name="category_id" ref="module_category_partes"/>
-            <field name="implied_ids" eval="[(4, ref('group_parte_profesor'))]"/>
+            <field name="implied_ids" eval="[(4, ref('incidentes.group_parte_profesor'))]"/>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
     </data>

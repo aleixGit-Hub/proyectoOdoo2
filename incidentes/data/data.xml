@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="0">
+
+    <!-- ================================================================
+         GRUPOS / CLASES
+    ================================================================ -->
+    <record id="grupo_1dam" model="grupo">
+        <field name="name">1º DAM</field>
+    </record>
+
+    <record id="grupo_2dam" model="grupo">
+        <field name="name">2º DAM</field>
+    </record>
+
+    <record id="grupo_1daw" model="grupo">
+        <field name="name">1º DAW</field>
+    </record>
+
+    <record id="grupo_2daw" model="grupo">
+        <field name="name">2º DAW</field>
+    </record>
+
+
+    <!-- ================================================================
+         ASIGNATURAS
+    ================================================================ -->
+    <record id="asig_prog" model="asignatura">
+        <field name="name">Programación</field>
+    </record>
+
+    <record id="asig_bd" model="asignatura">
+        <field name="name">Bases de Datos</field>
+    </record>
+
+    <record id="asig_psp" model="asignatura">
+        <field name="name">Programación de Servicios y Procesos</field>
+    </record>
+
+    <record id="asig_ent" model="asignatura">
+        <field name="name">Entornos de Desarrollo</field>
+    </record>
+
+    <record id="asig_lm" model="asignatura">
+        <field name="name">Lenguajes de Marcas</field>
+    </record>
+
+
+    <!-- ================================================================
+         PROFESORES
+    ================================================================ -->
+    <record id="prof_garcia" model="profesor">
+        <field name="name">Carlos García Martínez</field>
+        <field name="dni">12345678A</field>
+    </record>
+
+    <record id="prof_lopez" model="profesor">
+        <field name="name">María López Sánchez</field>
+        <field name="dni">23456789B</field>
+    </record>
+
+    <record id="prof_fernandez" model="profesor">
+        <field name="name">Antonio Fernández Ruiz</field>
+        <field name="dni">34567890C</field>
+    </record>
+
+    <record id="prof_martinez" model="profesor">
+        <field name="name">Laura Martínez Gómez</field>
+        <field name="dni">45678901D</field>
+    </record>
+
+    <record id="prof_rodriguez" model="profesor">
+        <field name="name">Pedro Rodríguez Pérez</field>
+        <field name="dni">56789012E</field>
+    </record>
+
+
+    <!-- ================================================================
+         ALUMNOS
+    ================================================================ -->
+    <record id="alumno_01" model="alumno">
+        <field name="name">Alejandro Gómez Torres</field>
+        <field name="grupo_id" ref="grupo_1dam"/>
+        <field name="tutor_id" ref="prof_garcia"/>
+    </record>
+
+    <record id="alumno_02" model="alumno">
+        <field name="name">Beatriz Navarro Moreno</field>
+        <field name="grupo_id" ref="grupo_1dam"/>
+        <field name="tutor_id" ref="prof_garcia"/>
+    </record>
+
+    <record id="alumno_03" model="alumno">
+        <field name="name">Carlos Jiménez Vega</field>
+        <field name="grupo_id" ref="grupo_2dam"/>
+        <field name="tutor_id" ref="prof_lopez"/>
+    </record>
+
+    <record id="alumno_04" model="alumno">
+        <field name="name">Diana Serrano Blanco</field>
+        <field name="grupo_id" ref="grupo_2dam"/>
+        <field name="tutor_id" ref="prof_lopez"/>
+    </record>
+
+    <record id="alumno_05" model="alumno">
+        <field name="name">Eduardo Ramos Castillo</field>
+        <field name="grupo_id" ref="grupo_1daw"/>
+        <field name="tutor_id" ref="prof_fernandez"/>
+    </record>
+
+    <record id="alumno_06" model="alumno">
+        <field name="name">Fátima Ortega Leal</field>
+        <field name="grupo_id" ref="grupo_1daw"/>
+        <field name="tutor_id" ref="prof_fernandez"/>
+    </record>
+
+    <record id="alumno_07" model="alumno">
+        <field name="name">Gonzalo Reyes Montero</field>
+        <field name="grupo_id" ref="grupo_2daw"/>
+        <field name="tutor_id" ref="prof_martinez"/>
+    </record>
+
+    <record id="alumno_08" model="alumno">
+        <field name="name">Helena Cruz Delgado</field>
+        <field name="grupo_id" ref="grupo_2daw"/>
+        <field name="tutor_id" ref="prof_martinez"/>
+    </record>
+
+    <record id="alumno_09" model="alumno">
+        <field name="name">Iván Molina Aguilar</field>
+        <field name="grupo_id" ref="grupo_1dam"/>
+        <field name="tutor_id" ref="prof_garcia"/>
+    </record>
+
+    <record id="alumno_10" model="alumno">
+        <field name="name">Julia Herrera Soler</field>
+        <field name="grupo_id" ref="grupo_2dam"/>
+        <field name="tutor_id" ref="prof_lopez"/>
+    </record>
+
+    <record id="alumno_11" model="alumno">
+        <field name="name">Kevin Ríos Vargas</field>
+        <field name="grupo_id" ref="grupo_1daw"/>
+        <field name="tutor_id" ref="prof_fernandez"/>
+    </record>
+
+    <record id="alumno_12" model="alumno">
+        <field name="name">Laura Santos Méndez</field>
+        <field name="grupo_id" ref="grupo_2daw"/>
+        <field name="tutor_id" ref="prof_rodriguez"/>
+    </record>
+
+
+    <!-- ================================================================
+         PARTES DE INCIDENCIA
+    ================================================================ -->
+
+    <record id="parte_001" model="parte">
+        <field name="name">PARTE-2025-001</field>
+        <field name="estado">comunicado</field>
+        <field name="profesor_id" ref="prof_garcia"/>
+        <field name="alumno_id" ref="alumno_01"/>
+        <field name="grupo_id" ref="grupo_1dam"/>
+        <field name="asignatura_id" ref="asig_prog"/>
+        <field name="fecha_hora">2025-09-10 09:15:00</field>
+        <field name="ubicacion">aula</field>
+        <field name="testigos">Compañero de mesa</field>
+        <field name="descripcion">El alumno se negó a entregar la tarea y mostró una actitud desafiante.</field>
+        <field name="gravedad">completado</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_002" model="parte">
+        <field name="name">PARTE-2025-002</field>
+        <field name="estado">sancionado</field>
+        <field name="profesor_id" ref="prof_lopez"/>
+        <field name="alumno_id" ref="alumno_03"/>
+        <field name="grupo_id" ref="grupo_2dam"/>
+        <field name="asignatura_id" ref="asig_bd"/>
+        <field name="fecha_hora">2025-09-15 11:30:00</field>
+        <field name="ubicacion">pasillo</field>
+        <field name="testigos">Profesora de guardia</field>
+        <field name="descripcion">Alumno encontrado corriendo por el pasillo y faltando el respeto al personal.</field>
+        <field name="gravedad">completado</field>
+        <field name="tiene_expulsion">True</field>
+    </record>
+
+    <record id="parte_003" model="parte">
+        <field name="name">PARTE-2025-003</field>
+        <field name="estado">borrador</field>
+        <field name="profesor_id" ref="prof_fernandez"/>
+        <field name="alumno_id" ref="alumno_05"/>
+        <field name="grupo_id" ref="grupo_1daw"/>
+        <field name="asignatura_id" ref="asig_lm"/>
+        <field name="fecha_hora">2025-10-02 08:45:00</field>
+        <field name="ubicacion">aula</field>
+        <field name="descripcion">Uso del móvil durante la clase después de varios avisos.</field>
+        <field name="gravedad">pendiente</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_004" model="parte">
+        <field name="name">PARTE-2025-004</field>
+        <field name="estado">cerrado</field>
+        <field name="profesor_id" ref="prof_martinez"/>
+        <field name="alumno_id" ref="alumno_07"/>
+        <field name="grupo_id" ref="grupo_2daw"/>
+        <field name="asignatura_id" ref="asig_psp"/>
+        <field name="fecha_hora">2025-10-08 10:00:00</field>
+        <field name="ubicacion">biblioteca</field>
+        <field name="testigos">Bibliotecaria</field>
+        <field name="descripcion">Daño material: rayó una mesa de la biblioteca.</field>
+        <field name="gravedad">cerrado</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_005" model="parte">
+        <field name="name">PARTE-2025-005</field>
+        <field name="estado">comunicado</field>
+        <field name="profesor_id" ref="prof_garcia"/>
+        <field name="alumno_id" ref="alumno_02"/>
+        <field name="grupo_id" ref="grupo_1dam"/>
+        <field name="asignatura_id" ref="asig_ent"/>
+        <field name="fecha_hora">2025-10-20 12:00:00</field>
+        <field name="ubicacion">patio</field>
+        <field name="testigos">Alumno testigo 1, Alumno testigo 2</field>
+        <field name="descripcion">Discusión acalorada en el patio durante el recreo.</field>
+        <field name="gravedad">pendiente</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_006" model="parte">
+        <field name="name">PARTE-2025-006</field>
+        <field name="estado">sancionado</field>
+        <field name="profesor_id" ref="prof_rodriguez"/>
+        <field name="alumno_id" ref="alumno_12"/>
+        <field name="grupo_id" ref="grupo_2daw"/>
+        <field name="asignatura_id" ref="asig_bd"/>
+        <field name="fecha_hora">2025-11-05 09:00:00</field>
+        <field name="ubicacion">aseos</field>
+        <field name="descripcion">Pintadas en los aseos del centro.</field>
+        <field name="gravedad">completado</field>
+        <field name="tiene_expulsion">True</field>
+    </record>
+
+    <record id="parte_007" model="parte">
+        <field name="name">PARTE-2025-007</field>
+        <field name="estado">borrador</field>
+        <field name="profesor_id" ref="prof_fernandez"/>
+        <field name="alumno_id" ref="alumno_06"/>
+        <field name="grupo_id" ref="grupo_1daw"/>
+        <field name="asignatura_id" ref="asig_prog"/>
+        <field name="fecha_hora">2025-11-12 15:30:00</field>
+        <field name="ubicacion">aula</field>
+        <field name="descripcion">Copia en examen detectada. Actitud negativa al ser informada.</field>
+        <field name="gravedad">pendiente</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_008" model="parte">
+        <field name="name">PARTE-2025-008</field>
+        <field name="estado">comunicado</field>
+        <field name="profesor_id" ref="prof_lopez"/>
+        <field name="alumno_id" ref="alumno_04"/>
+        <field name="grupo_id" ref="grupo_2dam"/>
+        <field name="fecha_hora">2025-11-18 10:45:00</field>
+        <field name="ubicacion">comedor</field>
+        <field name="testigos">Monitor de comedor</field>
+        <field name="descripcion">Lanzamiento de comida en el comedor.</field>
+        <field name="gravedad">completado</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_009" model="parte">
+        <field name="name">PARTE-2025-009</field>
+        <field name="estado">cerrado</field>
+        <field name="profesor_id" ref="prof_garcia"/>
+        <field name="alumno_id" ref="alumno_09"/>
+        <field name="grupo_id" ref="grupo_1dam"/>
+        <field name="asignatura_id" ref="asig_prog"/>
+        <field name="fecha_hora">2025-12-01 08:30:00</field>
+        <field name="ubicacion">gimnasio</field>
+        <field name="descripcion">Desobediencia reiterada al profesor de Educación Física.</field>
+        <field name="gravedad">cerrado</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_010" model="parte">
+        <field name="name">PARTE-2025-010</field>
+        <field name="estado">sancionado</field>
+        <field name="profesor_id" ref="prof_martinez"/>
+        <field name="alumno_id" ref="alumno_08"/>
+        <field name="grupo_id" ref="grupo_2daw"/>
+        <field name="asignatura_id" ref="asig_psp"/>
+        <field name="fecha_hora">2025-12-10 11:00:00</field>
+        <field name="ubicacion">aula</field>
+        <field name="testigos">Delegado de clase</field>
+        <field name="descripcion">Insultos a un compañero durante la clase.</field>
+        <field name="gravedad">completado</field>
+        <field name="tiene_expulsion">True</field>
+    </record>
+
+    <record id="parte_011" model="parte">
+        <field name="name">PARTE-2026-001</field>
+        <field name="estado">borrador</field>
+        <field name="profesor_id" ref="prof_garcia"/>
+        <field name="alumno_id" ref="alumno_01"/>
+        <field name="grupo_id" ref="grupo_1dam"/>
+        <field name="asignatura_id" ref="asig_bd"/>
+        <field name="fecha_hora">2026-01-08 09:00:00</field>
+        <field name="ubicacion">aula</field>
+        <field name="descripcion">Segunda incidencia con el mismo alumno. Actitud disruptiva.</field>
+        <field name="gravedad">pendiente</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_012" model="parte">
+        <field name="name">PARTE-2026-002</field>
+        <field name="estado">comunicado</field>
+        <field name="profesor_id" ref="prof_rodriguez"/>
+        <field name="alumno_id" ref="alumno_11"/>
+        <field name="grupo_id" ref="grupo_1daw"/>
+        <field name="asignatura_id" ref="asig_lm"/>
+        <field name="fecha_hora">2026-01-15 10:30:00</field>
+        <field name="ubicacion">pasillo</field>
+        <field name="descripcion">Acoso verbal detectado en el pasillo entre clases.</field>
+        <field name="gravedad">pendiente</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_013" model="parte">
+        <field name="name">PARTE-2026-003</field>
+        <field name="estado">borrador</field>
+        <field name="profesor_id" ref="prof_lopez"/>
+        <field name="alumno_id" ref="alumno_10"/>
+        <field name="grupo_id" ref="grupo_2dam"/>
+        <field name="fecha_hora">2026-01-22 14:00:00</field>
+        <field name="ubicacion">entrada</field>
+        <field name="descripcion">Alumna no respetó el control de entrada al centro.</field>
+        <field name="gravedad">pendiente</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_014" model="parte">
+        <field name="name">PARTE-2026-004</field>
+        <field name="estado">comunicado</field>
+        <field name="profesor_id" ref="prof_fernandez"/>
+        <field name="alumno_id" ref="alumno_05"/>
+        <field name="grupo_id" ref="grupo_1daw"/>
+        <field name="asignatura_id" ref="asig_ent"/>
+        <field name="fecha_hora">2026-02-03 09:45:00</field>
+        <field name="ubicacion">aula</field>
+        <field name="testigos">Auxiliar de clase</field>
+        <field name="descripcion">Alumno accedió a páginas prohibidas en el ordenador del aula.</field>
+        <field name="gravedad">completado</field>
+        <field name="tiene_expulsion">False</field>
+    </record>
+
+    <record id="parte_015" model="parte">
+        <field name="name">PARTE-2026-005</field>
+        <field name="estado">sancionado</field>
+        <field name="profesor_id" ref="prof_garcia"/>
+        <field name="alumno_id" ref="alumno_03"/>
+        <field name="grupo_id" ref="grupo_2dam"/>
+        <field name="asignatura_id" ref="asig_prog"/>
+        <field name="fecha_hora">2026-02-10 11:15:00</field>
+        <field name="ubicacion">patio</field>
+        <field name="testigos">Profesor de guardia</field>
+        <field name="descripcion">Pelea física en el patio. Reincidente. Se recomienda expulsión.</field>
+        <field name="gravedad">completado</field>
+        <field name="tiene_expulsion">True</field>
+    </record>
+
+</data>
+</odoo>

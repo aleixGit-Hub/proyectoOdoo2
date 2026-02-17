@@ -1,203 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Acciones para abrir las vistas principales -->
-    <!-- Acción: gestión de partes -->
+    <!-- ACCIONES -->
     <record id="action_open_parte" model="ir.actions.act_window">
         <field name="name">Gestión de Partes</field>
         <field name="res_model">parte</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,kanban,calendar,graph,pivot,form</field>
     </record>
-    <!-- Fin acción gestión de partes -->
 
-    <!-- Acción: grupos -->
     <record id="action_open_grupo" model="ir.actions.act_window">
         <field name="name">Grupos</field>
         <field name="res_model">grupo</field>
         <field name="view_mode">tree,form</field>
+        <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
-    <!-- Fin acción grupos -->
 
-    <!-- Acción: alumnos -->
     <record id="action_open_alumno" model="ir.actions.act_window">
         <field name="name">Alumnos</field>
         <field name="res_model">alumno</field>
         <field name="view_mode">tree,form</field>
+        <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
-    <!-- Fin acción alumnos -->
 
-    <!-- Acción: profesores -->
     <record id="action_open_profesor" model="ir.actions.act_window">
         <field name="name">Profesores</field>
         <field name="res_model">profesor</field>
         <field name="view_mode">tree,form</field>
+        <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
-    <!-- Fin acción profesores -->
 
-    <!-- Acción: asignaturas -->
     <record id="action_open_asignatura" model="ir.actions.act_window">
         <field name="name">Asignaturas</field>
         <field name="res_model">asignatura</field>
         <field name="view_mode">tree,form</field>
+        <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
-    <!-- Fin acción asignaturas -->
 
 
-    <!-- Vista tipo árbol de los partes -->
+    <!-- VISTA ÁRBOL -->
     <record id="view_parte_tree" model="ir.ui.view">
         <field name="name">parte.tree</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
-
-            <!-- Empieza el listado de partes -->
             <tree string="Listado de Partes"
-                  decoration-danger="gravedad == 'muy_grave'"
-                  decoration-warning="gravedad == 'grave'"
-                  decoration-success="gravedad == 'leve'"
-                  decoration-muted="estado == 'cerrado'">
-
+                  decoration-danger="gravedad == 'pendiente'"
+                  decoration-success="gravedad == 'completado'"
+                  decoration-muted="gravedad == 'cerrado' or estado == 'cerrado'">
                 <field name="name"/>
                 <field name="fecha_hora"/>
-
-                <!-- Columna de gravedad con badges -->
+                <field name="ubicacion"/>
                 <field name="gravedad" widget="badge"
-                       decoration-danger="gravedad == 'muy_grave'"
-                       decoration-warning="gravedad == 'grave'"
-                       decoration-success="gravedad == 'leve'"/>
-
+                       decoration-danger="gravedad == 'pendiente'"
+                       decoration-success="gravedad == 'completado'"
+                       decoration-muted="gravedad == 'cerrado'"/>
                 <field name="alumno_id"/>
                 <field name="grupo_id"/>
-                <field name="tiene_expulsion" widget="boolean_toggle"/>
+                <field name="priority" widget="priority"/>
+                <field name="tiene_expulsion" widget="boolean_toggle"
+                       groups="incidentes.group_parte_manager"/>
                 <field name="profesor_id"/>
-
-                <!-- Estado del parte -->
-                <field name="estado" widget="badge" decoration-info="estado == 'borrador'"/>
-
+                <field name="estado" widget="badge"
+                       decoration-info="estado == 'borrador'"
+                       decoration-warning="estado == 'comunicado'"
+                       decoration-danger="estado == 'sancionado'"
+                       decoration-success="estado == 'cerrado'"/>
             </tree>
-            <!-- Termina el listado de partes -->
-
         </field>
     </record>
-    <!-- Fin vista árbol de partes -->
 
 
-    <!-- Vista formulario del parte -->
+    <!-- VISTA FORMULARIO -->
     <record id="view_parte_form" model="ir.ui.view">
         <field name="name">parte.form</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
-
             <form>
-
-                <!-- Barra superior con el estado -->
                 <header>
                     <field name="estado" widget="statusbar"
                            statusbar_visible="borrador,comunicado,sancionado,cerrado"/>
                 </header>
-                <!-- Fin del header -->
-
-                <!-- Contenido principal del formulario -->
                 <sheet>
+                    <!-- Cinta roja solo manager -->
+                    <widget name="web_ribbon" title="EXPULSIÓN" bg_color="bg-danger"
+                            attrs="{'invisible': [('tiene_expulsion', '=', False)]}"
+                            groups="incidentes.group_parte_manager"/>
 
-                    <!-- Ribbon rojo cuando hay expulsión -->
-                    <widget name="web_ribbon" title="EXPULSIÓN"
-                            bg_color="bg-danger"
-                            attrs="{'invisible': [('tiene_expulsion', '=', False)]}"/>
-
-                    <!-- Título del parte -->
-                    <div class="oe_title">
-                        <h1>
-                            <field name="name" readonly="1"/>
-                        </h1>
+                    <!-- WIDGET statinfo – botón inteligente total partes alumno -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_ver_partes_alumno" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="total_partes_alumno" widget="statinfo"
+                                   string="Partes del alumno"/>
+                        </button>
                     </div>
-                    <!-- Fin del título -->
 
-                    <!-- Bloque principal de datos -->
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                        <!-- WIDGET priority – estrellas de prioridad -->
+                        <field name="priority" widget="priority"/>
+                    </div>
+
                     <group>
-
-                        <!-- Datos del incidente -->
                         <group string="Datos del Incidente">
-                            <field name="profesor_id" options="{'no_create': False}"/>
+                            <field name="profesor_id"/>
                             <field name="asignatura_id"/>
                             <field name="fecha_hora"/>
-                            <field name="lugar"/>
+                            <field name="ubicacion"/>
                         </group>
-                        <!-- Fin datos del incidente -->
-
-                        <!-- Alumno y gravedad -->
-                        <group string="Alumno y Gravedad">
+                        <group string="Alumno e Incidencia">
                             <field name="alumno_id"/>
                             <field name="grupo_id"/>
                             <field name="gravedad" widget="radio" options="{'horizontal': true}"/>
-                            <field name="tiene_expulsion" widget="boolean_toggle"/>
+                            <field name="tiene_expulsion" widget="boolean_toggle"
+                                   groups="incidentes.group_parte_manager"/>
                             <field name="testigos"/>
                         </group>
-                        <!-- Fin alumno y gravedad -->
-
                     </group>
-                    <!-- Fin bloque principal -->
 
-                    <!-- Pestañas del formulario -->
+                    <!-- WIDGET progressbar – barra de progreso del estado -->
+                    <group string="Progreso del expediente">
+                        <field name="progreso_estado" widget="progressbar"
+                               string="Avance del parte (%)"/>
+                    </group>
+
                     <notebook>
-
-                        <!-- Descripción -->
                         <page string="Descripción de los Hechos">
                             <field name="descripcion"
                                    placeholder="Explica aquí qué ha pasado exactamente..."/>
                         </page>
-                        <!-- Fin descripción -->
-
-                        <!-- Resolución y firma -->
-                        <page string="Resolución y Firma">
-
-                            <group>
-                                <field name="motivo_sancion"/>
-                                <field name="observaciones"/>
-                            </group>
-
-                            <!-- Firma del profesor -->
-                            <group string="Conformidad">
-                                <field name="firma_profesor" widget="signature"/>
-                            </group>
-                            <!-- Fin firma -->
-
+                        <page string="Observaciones y Documentación">
+                            <div class="alert alert-info mb-2" role="alert">
+                                <strong>Cómo añadir imágenes:</strong>
+                                Usa el botón "Insertar imagen" de la barra del editor HTML.
+                            </div>
+                            <field name="observaciones"
+                                   placeholder="Medidas cautelares, resoluciones o imágenes..."/>
                         </page>
-                        <!-- Fin resolución -->
-
                     </notebook>
-                    <!-- Fin pestañas -->
-
                 </sheet>
-                <!-- Fin del sheet -->
-
-                <!-- Chatter: mensajes y actividades -->
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>
                     <field name="activity_ids"/>
                     <field name="message_ids"/>
                 </div>
-                <!-- Fin del chatter -->
-
             </form>
-
         </field>
     </record>
-    <!-- Fin vista formulario de partes -->
 
 
-    <!-- Vistas simples tipo árbol -->
-    <!-- Árbol de grupos -->
+    <!-- VISTAS ÁRBOL AUXILIARES -->
     <record id="view_grupo_tree" model="ir.ui.view">
         <field name="name">grupo.tree</field>
         <field name="model">grupo</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-            </tree>
+            <tree><field name="name"/></tree>
         </field>
     </record>
 
-    <!-- Árbol de alumnos -->
     <record id="view_alumno_tree" model="ir.ui.view">
         <field name="name">alumno.tree</field>
         <field name="model">alumno</field>
@@ -205,51 +165,37 @@
             <tree>
                 <field name="name"/>
                 <field name="grupo_id"/>
+                <field name="tutor_id"/>
             </tree>
         </field>
     </record>
 
-    <!-- Árbol de profesores -->
     <record id="view_profesor_tree" model="ir.ui.view">
         <field name="name">profesor.tree</field>
         <field name="model">profesor</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-                <field name="dni"/>
-            </tree>
+            <tree><field name="name"/><field name="dni"/></tree>
         </field>
     </record>
 
-    <!-- Árbol de asignaturas -->
     <record id="view_asignatura_tree" model="ir.ui.view">
         <field name="name">asignatura.tree</field>
         <field name="model">asignatura</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-            </tree>
+            <tree><field name="name"/></tree>
         </field>
     </record>
 
 
-    <!-- Formularios simples -->
-    <!-- Formulario grupo -->
+    <!-- VISTAS FORMULARIO AUXILIARES -->
     <record id="view_grupo_form" model="ir.ui.view">
         <field name="name">grupo.form</field>
         <field name="model">grupo</field>
         <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                    </group>
-                </sheet>
-            </form>
+            <form><sheet><group><field name="name"/></group></sheet></form>
         </field>
     </record>
 
-    <!-- Formulario alumno -->
     <record id="view_alumno_form" model="ir.ui.view">
         <field name="name">alumno.form</field>
         <field name="model">alumno</field>
@@ -257,19 +203,14 @@
             <form>
                 <sheet>
                     <group>
-                        <group>
-                            <field name="name"/>
-                        </group>
-                        <group>
-                            <field name="grupo_id"/>
-                        </group>
+                        <group><field name="name"/><field name="grupo_id"/></group>
+                        <group><field name="tutor_id"/></group>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- Formulario profesor -->
     <record id="view_profesor_form" model="ir.ui.view">
         <field name="name">profesor.form</field>
         <field name="model">profesor</field>
@@ -277,54 +218,41 @@
             <form>
                 <sheet>
                     <group>
-                        <group>
-                            <field name="name"/>
-                        </group>
-                        <group>
-                            <field name="dni"/>
-                        </group>
+                        <group><field name="name"/></group>
+                        <group><field name="dni"/></group>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- Formulario asignatura -->
     <record id="view_asignatura_form" model="ir.ui.view">
         <field name="name">asignatura.form</field>
         <field name="model">asignatura</field>
         <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                    </group>
-                </sheet>
-            </form>
+            <form><sheet><group><field name="name"/></group></sheet></form>
         </field>
     </record>
 
 
-    <!-- Menú principal -->
+    <!-- MENÚS -->
     <menuitem id="menu_principal" name="Partes de Incidentes"/>
 
-    <!-- Menú de partes -->
     <menuitem id="menu_partes"
               name="Gestión de Partes"
               parent="menu_principal"
               action="action_open_parte"
               sequence="1"/>
 
-    <!-- Menú de configuración -->
     <menuitem id="menu_configuracion"
               name="Configuración"
               parent="menu_principal"
-              sequence="10"/>
+              sequence="20"
+              groups="incidentes.group_parte_manager"/>
 
-    <!-- Submenús de configuración -->
-    <menuitem id="menu_alumnos" name="Alumnos" parent="menu_configuracion" action="action_open_alumno"/>
-    <menuitem id="menu_grupos" name="Grupos" parent="menu_configuracion" action="action_open_grupo"/>
-    <menuitem id="menu_profesor" name="Profesores" parent="menu_configuracion" action="action_open_profesor"/>
-    <menuitem id="menu_asignatura" name="Asignaturas" parent="menu_configuracion" action="action_open_asignatura"/>
+    <menuitem id="menu_alumnos"    name="Alumnos"     parent="menu_configuracion" action="action_open_alumno"     groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_grupos"     name="Grupos"      parent="menu_configuracion" action="action_open_grupo"      groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_profesor"   name="Profesores"  parent="menu_configuracion" action="action_open_profesor"   groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_asignatura" name="Asignaturas" parent="menu_configuracion" action="action_open_asignatura" groups="incidentes.group_parte_manager"/>
 
 </odoo>
