@@ -41,8 +41,8 @@ class Parte(models.Model):
     testigos    = fields.Char(string='Testigos presentes')
     descripcion = fields.Text(string='Relato de los hechos')
 
-    # Estado único — contacto con familia
-    gravedad = fields.Selection([
+    # CAMBIO A ESTADO
+    estado = fields.Selection([
         ('pendiente_llamar', 'Pendiente Contactar'),
         ('llamado',          'Contactado'),
         ('cerrado',          'Cerrado'),
@@ -90,12 +90,12 @@ class Parte(models.Model):
     @api.depends('grupo_id')
     def _compute_total_pendientes_grupo(self):
         for rec in self:
-            rec.total_pendientes_grupo = self.search_count([('grupo_id', '=', rec.grupo_id.id), ('gravedad', '=', 'pendiente_llamar')]) if rec.grupo_id else 0
+            rec.total_pendientes_grupo = self.search_count([('grupo_id', '=', rec.grupo_id.id), ('estado', '=', 'pendiente_llamar')]) if rec.grupo_id else 0
 
     def action_ver_pendientes_grupo(self):
         self.ensure_one()
         return {'name': 'Pendientes de ' + (self.grupo_id.name or ''), 'type': 'ir.actions.act_window',
-                'res_model': 'parte', 'view_mode': 'tree,form', 'domain': [('grupo_id', '=', self.grupo_id.id), ('gravedad', '=', 'pendiente_llamar')]}
+                'res_model': 'parte', 'view_mode': 'tree,form', 'domain': [('grupo_id', '=', self.grupo_id.id), ('estado', '=', 'pendiente_llamar')]}
 
     _sql_constraints = [('unique_alumno_fecha', 'UNIQUE(alumno_id, fecha_hora)', 'Ya existe un parte para este alumno en esa misma fecha y hora exacta.')]
 
@@ -113,18 +113,10 @@ class Parte(models.Model):
             domain_alumno = [('grupo_id', '=', self.grupo_id.id)]
         return {'domain': {'alumno_id': domain_alumno}}
 
-    @api.constrains('alumno_id', 'grupo_id')
-    def _check_alumno_grupo(self):
+    @api.constrains('tiene_expulsion', 'estado')
+    def _check_expulsion_estado(self):
         for rec in self:
-            if rec.alumno_id and rec.grupo_id:
-                if rec.alumno_id.grupo_id and rec.alumno_id.grupo_id != rec.grupo_id:
-                    raise ValidationError('El alumno "%s" pertenece al grupo "%s", no al grupo "%s".' % (
-                        rec.alumno_id.name, rec.alumno_id.grupo_id.name, rec.grupo_id.name))
-
-    @api.constrains('tiene_expulsion', 'gravedad')
-    def _check_expulsion_gravedad(self):
-        for rec in self:
-            if rec.tiene_expulsion and rec.gravedad == 'pendiente_llamar':
+            if rec.tiene_expulsion and rec.estado == 'pendiente_llamar':
                 raise ValidationError('Un parte con expulsión no puede quedar como "Pendiente Contactar". Márcalo como "Contactado" o "Cerrado".')
 
 
@@ -147,5 +139,5 @@ class ParteLlamada(models.Model):
     def create(self, vals):
         rec = super().create(vals)
         if rec.resultado == 'contactado' and rec.parte_id:
-            rec.parte_id.gravedad = 'llamado'
+            rec.parte_id.estado = 'llamado'
         return rec

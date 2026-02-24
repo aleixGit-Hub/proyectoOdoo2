@@ -36,28 +36,21 @@
         <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
 
-
-    <!-- ====================================================================
-         VISTA ÁRBOL
-         verde  = contactado
-         naranja= pendiente contactar
-         gris   = cerrado
-    ==================================================================== -->
     <record id="view_parte_tree" model="ir.ui.view">
         <field name="name">parte.tree</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
             <tree string="Listado de Partes"
-                  decoration-success="gravedad == 'llamado'"
-                  decoration-warning="gravedad == 'pendiente_llamar'"
-                  decoration-muted="gravedad == 'cerrado'">
+                  decoration-success="estado == 'llamado'"
+                  decoration-warning="estado == 'pendiente_llamar'"
+                  decoration-muted="estado == 'cerrado'">
 
                 <field name="name"            string="Referencia"/>
                 <field name="alumno_id"       string="Alumno"/>
                 <field name="grupo_id"        string="Grupo"/>
                 <field name="fecha_hora"      string="Fecha y hora"/>
                 <field name="motivo"          string="Motivo"/>
-                <field name="gravedad"        widget="badge" string="Estado"/>
+                <field name="estado"          widget="badge" string="Estado"/>
                 <field name="priority"        widget="priority"/>
                 <field name="tiene_expulsion" widget="boolean_toggle"
                        groups="incidentes.group_parte_manager" string="Expulsión"/>
@@ -66,19 +59,15 @@
         </field>
     </record>
 
-
-    <!-- ====================================================================
-         VISTA FORMULARIO
-    ==================================================================== -->
     <record id="view_parte_form" model="ir.ui.view">
         <field name="name">parte.form</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <field name="gravedad" widget="statusbar"
+                    <field name="estado" widget="statusbar"
                            statusbar_visible="pendiente_llamar,llamado,cerrado"
-                           attrs="{'readonly': [('gravedad', '=', 'cerrado')]}"
+                           options="{'clickable': '1'}"
                     />
                 </header>
                 <sheet>
@@ -162,13 +151,15 @@
         </field>
     </record>
 
-
-    <!-- VISTAS ÁRBOL AUXILIARES -->
     <record id="view_grupo_tree" model="ir.ui.view">
         <field name="name">grupo.tree</field>
         <field name="model">grupo</field>
         <field name="arch" type="xml">
-            <tree><field name="name"/><field name="etapa"/></tree>
+            <tree>
+                <field name="name"/>
+                <field name="etapa"/>
+                <field name="tutor_id"/>
+            </tree>
         </field>
     </record>
 
@@ -179,7 +170,6 @@
             <tree>
                 <field name="name"/>
                 <field name="grupo_id"/>
-                <field name="tutor_id"/>
             </tree>
         </field>
     </record>
@@ -188,7 +178,11 @@
         <field name="name">profesor.tree</field>
         <field name="model">profesor</field>
         <field name="arch" type="xml">
-            <tree><field name="name"/><field name="dni"/></tree>
+            <tree>
+                <field name="name"/>
+                <field name="dni"/>
+                <field name="user_id"/>
+            </tree>
         </field>
     </record>
 
@@ -200,8 +194,6 @@
         </field>
     </record>
 
-
-    <!-- VISTAS FORMULARIO AUXILIARES -->
     <record id="view_grupo_form" model="ir.ui.view">
         <field name="name">grupo.form</field>
         <field name="model">grupo</field>
@@ -209,6 +201,7 @@
             <form><sheet><group>
                 <field name="name"/>
                 <field name="etapa"/>
+                <field name="tutor_id"/>
             </group></sheet></form>
         </field>
     </record>
@@ -220,8 +213,10 @@
             <form>
                 <sheet>
                     <group>
-                        <group><field name="name"/><field name="grupo_id"/></group>
-                        <group><field name="tutor_id"/></group>
+                        <group>
+                            <field name="name"/>
+                            <field name="grupo_id"/>
+                        </group>
                     </group>
                 </sheet>
             </form>
@@ -236,7 +231,10 @@
                 <sheet>
                     <group>
                         <group><field name="name"/></group>
-                        <group><field name="dni"/></group>
+                        <group>
+                            <field name="dni"/>
+                            <field name="user_id"/>
+                        </group>
                     </group>
                 </sheet>
             </form>
@@ -251,41 +249,12 @@
         </field>
     </record>
 
-
-    <!-- MENÚS -->
     <menuitem id="menu_principal" name="Partes de Incidentes"/>
-
-    <menuitem id="menu_partes"
-              name="Gestión de Partes"
-              parent="menu_principal"
-              action="action_open_parte"
-              sequence="1"/>
-
-    <menuitem id="menu_configuracion"
-              name="Configuración"
-              parent="menu_principal"
-              sequence="20"
-              groups="incidentes.group_parte_manager"/>
-
-    <menuitem id="menu_alumnos"
-              name="Alumnos"
-              parent="menu_configuracion"
-              action="action_open_alumno"
-              groups="incidentes.group_parte_manager"/>
-    <menuitem id="menu_grupos"
-              name="Grupos"
-              parent="menu_configuracion"
-              action="action_open_grupo"
-              groups="incidentes.group_parte_manager"/>
-    <menuitem id="menu_profesor"
-              name="Profesores"
-              parent="menu_configuracion"
-              action="action_open_profesor"
-              groups="incidentes.group_parte_manager"/>
-    <menuitem id="menu_asignatura"
-              name="Asignaturas"
-              parent="menu_configuracion"
-              action="action_open_asignatura"
-              groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_partes" name="Gestión de Partes" parent="menu_principal" action="action_open_parte" sequence="1"/>
+    <menuitem id="menu_configuracion" name="Configuración" parent="menu_principal" sequence="20" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_alumnos" name="Alumnos" parent="menu_configuracion" action="action_open_alumno" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_grupos" name="Grupos" parent="menu_configuracion" action="action_open_grupo" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_profesor" name="Profesores" parent="menu_configuracion" action="action_open_profesor" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_asignatura" name="Asignaturas" parent="menu_configuracion" action="action_open_asignatura" groups="incidentes.group_parte_manager"/>
 
 </odoo>

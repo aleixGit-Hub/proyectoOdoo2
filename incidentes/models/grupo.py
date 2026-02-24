@@ -17,3 +17,6 @@ class Grupo(models.Model):
         required=True,
         default='ciclos',
     )
+    
+    # NUEVO: El tutor se asigna a todo el grupo
+    tutor_id = fields.Many2one('profesor', string='Tutor del Grupo')

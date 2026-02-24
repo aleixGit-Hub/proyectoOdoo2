@@ -7,4 +7,4 @@ class Alumno(models.Model):
 
     name = fields.Char(string="Nombre completo", required=True)
     grupo_id = fields.Many2one('grupo', string="Grupo al que pertenece")
-    tutor_id = fields.Many2one('profesor', string="Tutor asignado")
+    

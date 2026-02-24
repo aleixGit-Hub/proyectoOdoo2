@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ====================================================================
-         VISTA BÚSQUEDA AVANZADA
-    ==================================================================== -->
     <record id="view_parte_search" model="ir.ui.view">
         <field name="name">parte.search</field>
         <field name="model">parte</field>
@@ -18,11 +15,11 @@
 
                 <separator/>
                 <filter name="pendientes_llamar" string="🟠 Pendiente Contactar"
-                        domain="[('gravedad', '=', 'pendiente_llamar')]"/>
+                        domain="[('estado', '=', 'pendiente_llamar')]"/>
                 <filter name="llamados" string="🟢 Contactado"
-                        domain="[('gravedad', '=', 'llamado')]"/>
+                        domain="[('estado', '=', 'llamado')]"/>
                 <filter name="cerrados" string="⚫ Cerrado"
-                        domain="[('gravedad', '=', 'cerrado')]"/>
+                        domain="[('estado', '=', 'cerrado')]"/>
 
                 <separator/>
                 <filter name="con_expulsion" string="🚨 Con Expulsión"
@@ -66,7 +63,7 @@
                     <filter name="grupo_by_grupo"    string="Grupo"          context="{'group_by': 'grupo_id'}"/>
                     <filter name="grupo_by_alumno"   string="Alumno"         context="{'group_by': 'alumno_id'}"/>
                     <filter name="grupo_by_profesor" string="Profesor"       context="{'group_by': 'profesor_id'}"/>
-                    <filter name="grupo_by_gravedad" string="Estado"         context="{'group_by': 'gravedad'}"/>
+                    <filter name="grupo_by_estado"   string="Estado"         context="{'group_by': 'estado'}"/>
                     <filter name="grupo_by_motivo"   string="Motivo"         context="{'group_by': 'motivo'}"/>
                     <filter name="grupo_by_mes"      string="Mes"            context="{'group_by': 'fecha_hora:month'}"/>
                     <filter name="grupo_by_trimestre" string="Trimestre"     context="{'group_by': 'fecha_hora:quarter'}"/>
@@ -75,18 +72,14 @@
         </field>
     </record>
 
-
-    <!-- ====================================================================
-         VISTA KANBAN
-    ==================================================================== -->
     <record id="view_parte_kanban" model="ir.ui.view">
         <field name="name">parte.kanban</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="gravedad" class="o_kanban_small_column" sample="1">
+            <kanban default_group_by="estado" class="o_kanban_small_column" sample="1">
                 <field name="alumno_id"/>
                 <field name="grupo_id"/>
-                <field name="gravedad"/>
+                <field name="estado"/>
                 <field name="tiene_expulsion"/>
                 <templates>
                     <t t-name="kanban-box">
@@ -105,9 +98,9 @@
                                 </div>
                                 <hr class="mt-1 mb-1"/>
                                 <div class="text-center">
-                                    <span t-if="record.gravedad.raw_value == 'pendiente_llamar'"
+                                    <span t-if="record.estado.raw_value == 'pendiente_llamar'"
                                           class="badge badge-warning">🟠 Pendiente Contactar</span>
-                                    <span t-elif="record.gravedad.raw_value == 'llamado'"
+                                    <span t-elif="record.estado.raw_value == 'llamado'"
                                           class="badge badge-success">🟢 Contactado</span>
                                     <span t-else=""
                                           class="badge badge-secondary">⚫ Cerrado</span>
@@ -127,34 +120,26 @@
         </field>
     </record>
 
-
-    <!-- ====================================================================
-         VISTA CALENDARIO
-    ==================================================================== -->
     <record id="view_parte_calendar" model="ir.ui.view">
         <field name="name">parte.calendar</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
             <calendar string="Calendario de Partes" date_start="fecha_hora"
-                      color="gravedad" quick_add="False" mode="month">
+                      color="estado" quick_add="False" mode="month">
                 <field name="alumno_id"/>
                 <field name="grupo_id"/>
-                <field name="gravedad"/>
+                <field name="estado"/>
                 <field name="profesor_id"/>
             </calendar>
         </field>
     </record>
 
-
-    <!-- ====================================================================
-         VISTAS GRÁFICO
-    ==================================================================== -->
-    <record id="view_parte_graph_gravedad" model="ir.ui.view">
-        <field name="name">parte.graph.gravedad</field>
+    <record id="view_parte_graph_estado" model="ir.ui.view">
+        <field name="name">parte.graph.estado</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
             <graph string="Partes por Estado" type="bar" sample="1">
-                <field name="gravedad" type="row"/>
+                <field name="estado" type="row"/>
                 <field name="grupo_id" type="col"/>
             </graph>
         </field>
@@ -176,7 +161,7 @@
         <field name="arch" type="xml">
             <graph string="Partes por Alumno" type="bar" sample="1">
                 <field name="alumno_id" type="row"/>
-                <field name="gravedad"  type="col"/>
+                <field name="estado"  type="col"/>
             </graph>
         </field>
     </record>
@@ -187,7 +172,7 @@
         <field name="arch" type="xml">
             <graph string="Partes por Profesor" type="bar" sample="1">
                 <field name="profesor_id" type="row"/>
-                <field name="gravedad"    type="col"/>
+                <field name="estado"    type="col"/>
             </graph>
         </field>
     </record>
@@ -198,7 +183,7 @@
         <field name="arch" type="xml">
             <graph string="Evolución mensual" type="line" sample="1">
                 <field name="fecha_hora" type="row" interval="month"/>
-                <field name="gravedad"   type="col"/>
+                <field name="estado"   type="col"/>
             </graph>
         </field>
     </record>
@@ -230,21 +215,17 @@
         <field name="arch" type="xml">
             <pivot string="Análisis de Partes" sample="1">
                 <field name="grupo_id"  type="row"/>
-                <field name="gravedad"  type="col"/>
+                <field name="estado"  type="col"/>
                 <field name="alumno_id" type="row"/>
             </pivot>
         </field>
     </record>
 
-
-    <!-- ====================================================================
-         ACCIONES ESTADÍSTICAS
-    ==================================================================== -->
-    <record id="action_estadisticas_gravedad" model="ir.actions.act_window">
+    <record id="action_estadisticas_estado" model="ir.actions.act_window">
         <field name="name">📊 Por Estado</field>
         <field name="res_model">parte</field>
         <field name="view_mode">graph,pivot</field>
-        <field name="view_id" ref="view_parte_graph_gravedad"/>
+        <field name="view_id" ref="view_parte_graph_estado"/>
         <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
 
@@ -296,40 +277,13 @@
         <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
 
-
-    <!-- ====================================================================
-         MENÚ ESTADÍSTICAS
-    ==================================================================== -->
-    <menuitem id="menu_estadisticas" name="📊 Estadísticas"
-              parent="menu_principal" sequence="5"
-              groups="incidentes.group_parte_manager"/>
-
-    <menuitem id="menu_stats_gravedad"   name="Por Estado"
-              parent="menu_estadisticas" action="action_estadisticas_gravedad"
-              sequence="1" groups="incidentes.group_parte_manager"/>
-
-    <menuitem id="menu_stats_grupo"      name="Por Grupo"
-              parent="menu_estadisticas" action="action_estadisticas_grupo"
-              sequence="2" groups="incidentes.group_parte_manager"/>
-
-    <menuitem id="menu_stats_alumno"     name="Por Alumno"
-              parent="menu_estadisticas" action="action_estadisticas_alumno"
-              sequence="3" groups="incidentes.group_parte_manager"/>
-
-    <menuitem id="menu_stats_profesor"   name="Por Profesor"
-              parent="menu_estadisticas" action="action_estadisticas_profesor"
-              sequence="4" groups="incidentes.group_parte_manager"/>
-
-    <menuitem id="menu_stats_mes"        name="Evolución Mensual"
-              parent="menu_estadisticas" action="action_estadisticas_mes"
-              sequence="5" groups="incidentes.group_parte_manager"/>
-
-    <menuitem id="menu_stats_trimestre"  name="Por Trimestre"
-              parent="menu_estadisticas" action="action_estadisticas_trimestre"
-              sequence="6" groups="incidentes.group_parte_manager"/>
-
-    <menuitem id="menu_stats_motivo"     name="Por Motivo"
-              parent="menu_estadisticas" action="action_estadisticas_motivo"
-              sequence="7" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_estadisticas" name="📊 Estadísticas" parent="menu_principal" sequence="5" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_estado"   name="Por Estado" parent="menu_estadisticas" action="action_estadisticas_estado" sequence="1" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_grupo"      name="Por Grupo" parent="menu_estadisticas" action="action_estadisticas_grupo" sequence="2" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_alumno"     name="Por Alumno" parent="menu_estadisticas" action="action_estadisticas_alumno" sequence="3" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_profesor"   name="Por Profesor" parent="menu_estadisticas" action="action_estadisticas_profesor" sequence="4" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_mes"        name="Evolución Mensual" parent="menu_estadisticas" action="action_estadisticas_mes" sequence="5" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_trimestre"  name="Por Trimestre" parent="menu_estadisticas" action="action_estadisticas_trimestre" sequence="6" groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_motivo"     name="Por Motivo" parent="menu_estadisticas" action="action_estadisticas_motivo" sequence="7" groups="incidentes.group_parte_manager"/>
 
 </odoo>

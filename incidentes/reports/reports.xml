@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ====================================================================
-         ACCIONES
-    ==================================================================== -->
     <record id="action_report_parte_individual" model="ir.actions.report">
         <field name="name">Informe de Parte</field>
         <field name="model">parte</field>
@@ -37,18 +34,20 @@
         <field name="paperformat_id" ref="base.paperformat_euro"/>
     </record>
 
-    <!-- ====================================================================
-         ESTILOS COMPARTIDOS
-    ==================================================================== -->
     <template id="report_styles_partes">
         <style>
             body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2d2d2d; }
 
             .doc-header { border-bottom: 4px solid #1a3a5c; padding-bottom: 12px; margin-bottom: 18px; }
-            .doc-header .titulo { font-size: 22px; font-weight: 800; color: #1a3a5c; letter-spacing: 1px; text-transform: uppercase; }
+            
+            /* Nuevos estilos para los datos del IES */
+            .insti-name { font-size: 17px; font-weight: 900; color: #1a3a5c; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+            .insti-datos { font-size: 10px; color: #555; margin-top: 4px; line-height: 1.4; }
+            
+            .doc-header .titulo { font-size: 18px; font-weight: 800; color: #1a3a5c; letter-spacing: 1px; text-transform: uppercase; margin-top: 10px; }
             .doc-header .subtitulo { font-size: 11px; color: #666; margin-top: 2px; }
-            .doc-header .ref-box { float: right; background: #1a3a5c; color: white; padding: 6px 14px; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; }
-            .doc-header .ref-box small { display: block; font-size: 9px; font-weight: 400; opacity: 0.8; }
+            .doc-header .ref-box { display: inline-block; background: #1a3a5c; color: white; padding: 6px 14px; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; }
+            .doc-header .ref-box small { display: block; font-size: 9px; font-weight: 400; opacity: 0.8; text-transform: uppercase; }
 
             .banner-expulsion { background: #c0392b; color: white; text-align: center; padding: 9px 0; font-size: 13px; font-weight: 700; border-radius: 4px; margin-bottom: 14px; letter-spacing: 2px; }
 
@@ -96,26 +95,33 @@
     </template>
 
 
-    <!-- ====================================================================
-         INFORME INDIVIDUAL DE PARTE
-    ==================================================================== -->
     <template id="report_parte_individual">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="parte">
-                <t t-call="web.external_layout">
+                <t t-call="web.basic_layout">
                     <t t-call="incidentes.report_styles_partes"/>
                     <div class="page">
 
-                        <div class="doc-header">
-                            <div class="ref-box">
-                                <small>Referencia</small>
-                                <t t-esc="parte.name"/>
+                        <div class="doc-header row align-items-end">
+                            <div class="col-6">
+                                <div class="insti-name">IES Marcos Zaragoza</div>
+                                <div class="insti-datos">
+                                    C. Ferrocarril, 22 <br/>
+                                    03570 La Vila Joiosa (Alicante) <br/>
+                                    Tlf: 966 87 01 40 | 03008915@edu.gva.es
+                                </div>
                             </div>
-                            <div class="titulo">Parte de Incidencia Grave</div>
-                            <div class="subtitulo">
-                                <t t-esc="parte.fecha_hora" t-options='{"widget": "datetime"}'/>
-                                &#160;&#8212;&#160;
-                                <t t-esc="dict(parte._fields['ubicacion'].selection).get(parte.ubicacion, '—')"/>
+                            <div class="col-6" style="text-align: right;">
+                                <div class="ref-box">
+                                    <small>Referencia</small>
+                                    <t t-esc="parte.name"/>
+                                </div>
+                                <div class="titulo">Parte de Incidencia Grave</div>
+                                <div class="subtitulo">
+                                    <t t-esc="parte.fecha_hora" t-options='{"widget": "datetime"}'/>
+                                    &#160;&#8212;&#160;
+                                    <t t-esc="dict(parte._fields['ubicacion'].selection).get(parte.ubicacion, '—')"/>
+                                </div>
                             </div>
                         </div>
 
@@ -147,18 +153,9 @@
                                         <tr>
                                             <td class="etiqueta">Estado llamada</td>
                                             <td class="valor">
-                                                <span t-if="parte.gravedad == 'pendiente_llamar'" class="badge badge-rojo">Pendiente</span>
-                                                <span t-elif="parte.gravedad == 'llamado'" class="badge badge-naranja">Contactado</span>
+                                                <span t-if="parte.estado == 'pendiente_llamar'" class="badge badge-rojo">Pendiente</span>
+                                                <span t-elif="parte.estado == 'llamado'" class="badge badge-naranja">Contactado</span>
                                                 <span t-else="" class="badge badge-gris">Cerrado</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="etiqueta">Estado parte</td>
-                                            <td class="valor">
-                                                <span t-if="parte.estado == 'borrador'" class="badge badge-azul">Borrador</span>
-                                                <span t-elif="parte.estado == 'comunicado'" class="badge badge-amarillo">Comunicado</span>
-                                                <span t-elif="parte.estado == 'sancionado'" class="badge badge-rojo">Sancionado</span>
-                                                <span t-else="" class="badge badge-verde">Cerrado</span>
                                             </td>
                                         </tr>
                                     </table>
@@ -178,7 +175,7 @@
                                         </tr>
                                         <tr>
                                             <td class="etiqueta">Tutor/a</td>
-                                            <td class="valor"><t t-esc="parte.alumno_id.tutor_id.name or '—'"/></td>
+                                            <td class="valor"><t t-esc="parte.grupo_id.tutor_id.name or '—'"/></td>
                                         </tr>
                                         <tr>
                                             <td class="etiqueta">Expulsión</td>
@@ -229,40 +226,47 @@
     </template>
 
 
-    <!-- ====================================================================
-         RESUMEN COMPACTO
-    ==================================================================== -->
     <template id="report_resumen_partes">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout">
+            <t t-call="web.basic_layout">
                 <t t-call="incidentes.report_styles_partes"/>
                 <div class="page">
 
-                    <div class="doc-header">
-                        <div class="ref-box">
-                            <small>Total partes</small>
-                            <t t-esc="len(docs)"/>
+                    <div class="doc-header row align-items-end">
+                        <div class="col-6">
+                            <div class="insti-name">IES Marcos Zaragoza</div>
+                            <div class="insti-datos">
+                                C. Ferrocarril, 22 <br/>
+                                03570 La Vila Joiosa (Alicante) <br/>
+                                Tlf: 966 87 01 40 | 03008915@edu.gva.es
+                            </div>
                         </div>
-                        <div class="titulo">Resumen de Partes de Incidencia</div>
-                        <div class="subtitulo">Generado el <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/></div>
+                        <div class="col-6" style="text-align: right;">
+                            <div class="ref-box">
+                                <small>Total partes</small>
+                                <t t-esc="len(docs)"/>
+                            </div>
+                            <div class="titulo">Resumen de Partes</div>
+                            <div class="subtitulo">Generado el <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/></div>
+                        </div>
                     </div>
 
                     <div class="row">
                         <div class="col-3">
                             <div class="stat-card stat-rojo">
-                                <div class="numero"><t t-esc="len(docs.filtered(lambda p: p.gravedad == 'pendiente_llamar'))"/></div>
+                                <div class="numero"><t t-esc="len(docs.filtered(lambda p: p.estado == 'pendiente_llamar'))"/></div>
                                 <div class="label">Pendientes</div>
                             </div>
                         </div>
                         <div class="col-3">
                             <div class="stat-card stat-naranja">
-                                <div class="numero"><t t-esc="len(docs.filtered(lambda p: p.gravedad == 'llamado'))"/></div>
+                                <div class="numero"><t t-esc="len(docs.filtered(lambda p: p.estado == 'llamado'))"/></div>
                                 <div class="label">Contactados</div>
                             </div>
                         </div>
                         <div class="col-3">
                             <div class="stat-card stat-gris">
-                                <div class="numero"><t t-esc="len(docs.filtered(lambda p: p.gravedad == 'cerrado'))"/></div>
+                                <div class="numero"><t t-esc="len(docs.filtered(lambda p: p.estado == 'cerrado'))"/></div>
                                 <div class="label">Cerrados</div>
                             </div>
                         </div>
@@ -284,7 +288,6 @@
                                 <th>Motivo</th>
                                 <th>Profesor</th>
                                 <th>Llamada</th>
-                                <th>Estado</th>
                                 <th>Exp.</th>
                             </tr>
                         </thead>
@@ -297,7 +300,6 @@
                                     <td><t t-esc="p.grupo_id.name"/></td>
                                     <td><t t-esc="dict(p._fields['motivo'].selection).get(p.motivo, '—')"/></td>
                                     <td><t t-esc="p.profesor_id.name"/></td>
-                                    <td><t t-esc="dict(p._fields['gravedad'].selection).get(p.gravedad, '')"/></td>
                                     <td><t t-esc="dict(p._fields['estado'].selection).get(p.estado, '')"/></td>
                                     <td style="text-align:center;font-weight:700;color:#c0392b;">
                                         <t t-if="p.tiene_expulsion">SÍ</t>
@@ -315,48 +317,55 @@
     </template>
 
 
-    <!-- ====================================================================
-         HISTORIAL POR ALUMNO
-    ==================================================================== -->
     <template id="report_partes_alumno">
         <t t-call="web.html_container">
             <t t-set="alumnos" t-value="docs.mapped('alumno_id')"/>
             <t t-foreach="alumnos" t-as="alumno">
-                <t t-call="web.external_layout">
+                <t t-call="web.basic_layout">
                     <t t-call="incidentes.report_styles_partes"/>
                     <div class="page">
 
                         <t t-set="partes_alumno" t-value="docs.filtered(lambda p: p.alumno_id == alumno)"/>
 
-                        <div class="doc-header">
-                            <div class="ref-box">
-                                <small>Total partes</small>
-                                <t t-esc="len(partes_alumno)"/>
+                        <div class="doc-header row align-items-end">
+                            <div class="col-6">
+                                <div class="insti-name">IES Marcos Zaragoza</div>
+                                <div class="insti-datos">
+                                    C. Ferrocarril, 22 <br/>
+                                    03570 La Vila Joiosa (Alicante) <br/>
+                                    Tlf: 966 87 01 40 | 03008915@edu.gva.es
+                                </div>
                             </div>
-                            <div class="titulo">Historial de Partes</div>
-                            <div class="subtitulo">
-                                <strong><t t-esc="alumno.name"/></strong>
-                                &#160;&#8212;&#160; Grupo: <t t-esc="alumno.grupo_id.name or '—'"/>
-                                &#160;&#8212;&#160; Tutor/a: <t t-esc="alumno.tutor_id.name or '—'"/>
+                            <div class="col-6" style="text-align: right;">
+                                <div class="ref-box">
+                                    <small>Total partes</small>
+                                    <t t-esc="len(partes_alumno)"/>
+                                </div>
+                                <div class="titulo">Historial de Partes</div>
+                                <div class="subtitulo">
+                                    <strong><t t-esc="alumno.name"/></strong>
+                                    &#160;&#8212;&#160; Grupo: <t t-esc="alumno.grupo_id.name or '—'"/>
+                                    &#160;&#8212;&#160; Tutor/a: <t t-esc="alumno.grupo_id.tutor_id.name or '—'"/>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-3">
                                 <div class="stat-card stat-rojo">
-                                    <div class="numero"><t t-esc="len(partes_alumno.filtered(lambda p: p.gravedad == 'pendiente_llamar'))"/></div>
+                                    <div class="numero"><t t-esc="len(partes_alumno.filtered(lambda p: p.estado == 'pendiente_llamar'))"/></div>
                                     <div class="label">Pendientes</div>
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="stat-card stat-naranja">
-                                    <div class="numero"><t t-esc="len(partes_alumno.filtered(lambda p: p.gravedad == 'llamado'))"/></div>
+                                    <div class="numero"><t t-esc="len(partes_alumno.filtered(lambda p: p.estado == 'llamado'))"/></div>
                                     <div class="label">Contactados</div>
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="stat-card stat-gris">
-                                    <div class="numero"><t t-esc="len(partes_alumno.filtered(lambda p: p.gravedad == 'cerrado'))"/></div>
+                                    <div class="numero"><t t-esc="len(partes_alumno.filtered(lambda p: p.estado == 'cerrado'))"/></div>
                                     <div class="label">Cerrados</div>
                                 </div>
                             </div>
@@ -377,7 +386,6 @@
                                     <th>Motivo</th>
                                     <th>Profesor</th>
                                     <th>Estado llamada</th>
-                                    <th>Estado parte</th>
                                     <th>Exp.</th>
                                 </tr>
                             </thead>
@@ -389,7 +397,6 @@
                                         <td><t t-esc="dict(p._fields['ubicacion'].selection).get(p.ubicacion, '')"/></td>
                                         <td><t t-esc="dict(p._fields['motivo'].selection).get(p.motivo, '—')"/></td>
                                         <td><t t-esc="p.profesor_id.name"/></td>
-                                        <td><t t-esc="dict(p._fields['gravedad'].selection).get(p.gravedad, '')"/></td>
                                         <td><t t-esc="dict(p._fields['estado'].selection).get(p.estado, '')"/></td>
                                         <td style="text-align:center;font-weight:700;color:#c0392b;">
                                             <t t-if="p.tiene_expulsion">SÍ</t>
