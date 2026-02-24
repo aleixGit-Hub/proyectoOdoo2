@@ -12,7 +12,7 @@
 
         <!-- ================================================================
              GRUPO: TUTOR
-             – Solo puede ver los partes que le afecten.
+             – Ve sus propios partes + partes de alumnos de su tutoría
         ================================================================ -->
         <record id="group_parte_tutor" model="res.groups">
             <field name="name">Tutor</field>
@@ -21,7 +21,7 @@
 
         <!-- ================================================================
              GRUPO: PROFESOR
-             – Puede crear y ver SUS PROPIOS partes. No puede borrar.
+             – Puede crear partes y ver solo los suyos. Puede crear alumnos.
         ================================================================ -->
         <record id="group_parte_profesor" model="res.groups">
             <field name="name">Profesor</field>
@@ -39,5 +39,55 @@
             <field name="implied_ids" eval="[(4, ref('incidentes.group_parte_profesor'))]"/>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
+
+        <!-- ================================================================
+             REGLA: PROFESOR — solo ve sus propios partes
+             (los que él ha creado, identificado por profesor_id.user_id)
+        ================================================================ -->
+        <record id="rule_parte_profesor_own" model="ir.rule">
+            <field name="name">Profesor: solo sus partes</field>
+            <field name="model_id" ref="model_parte"/>
+            <field name="groups" eval="[(4, ref('incidentes.group_parte_profesor'))]"/>
+            <field name="domain_force">[('profesor_id.user_id', '=', user.id)]</field>
+            <field name="perm_read"   eval="True"/>
+            <field name="perm_write"  eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ================================================================
+             REGLA: TUTOR — ve sus propios partes + partes de alumnos
+             cuyo tutor_id.user_id coincide con el usuario actual
+        ================================================================ -->
+        <record id="rule_parte_tutor_own" model="ir.rule">
+            <field name="name">Tutor: sus partes y los de su tutoría</field>
+            <field name="model_id" ref="model_parte"/>
+            <field name="groups" eval="[(4, ref('incidentes.group_parte_tutor'))]"/>
+            <field name="domain_force">
+                ['|',
+                    ('profesor_id.user_id', '=', user.id),
+                    ('alumno_id.tutor_id.user_id', '=', user.id)
+                ]
+            </field>
+            <field name="perm_read"   eval="True"/>
+            <field name="perm_write"  eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ================================================================
+             REGLA: MANAGER — acceso total (sin restricción de dominio)
+        ================================================================ -->
+        <record id="rule_parte_manager_all" model="ir.rule">
+            <field name="name">Manager: acceso total a partes</field>
+            <field name="model_id" ref="model_parte"/>
+            <field name="groups" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read"   eval="True"/>
+            <field name="perm_write"  eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
     </data>
 </odoo>

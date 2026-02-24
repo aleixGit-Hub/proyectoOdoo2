@@ -6,3 +6,14 @@ class Grupo(models.Model):
     _description = 'Grupos/Clases'
 
     name = fields.Char(string='Nombre (Ej: 1º DAM)', required=True)
+    etapa = fields.Selection(
+        [
+            ('eso',        'ESO'),
+            ('bachiller',  'Bachillerato'),
+            ('fp_basica',  'FP Básica'),
+            ('ciclos',     'Ciclos Formativos'),
+        ],
+        string='Etapa educativa',
+        required=True,
+        default='ciclos',
+    )

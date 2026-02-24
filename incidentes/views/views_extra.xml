@@ -2,53 +2,74 @@
 <odoo>
 
     <!-- ====================================================================
-         VISTA BÚSQUEDA AVANZADA – PARTE
+         VISTA BÚSQUEDA AVANZADA
     ==================================================================== -->
     <record id="view_parte_search" model="ir.ui.view">
         <field name="name">parte.search</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
             <search string="Buscar Partes">
-                <!-- Campos de búsqueda libre -->
                 <field name="alumno_id"   string="Alumno"/>
                 <field name="profesor_id" string="Profesor"/>
                 <field name="grupo_id"    string="Grupo"/>
                 <field name="ubicacion"   string="Ubicación"/>
                 <field name="name"        string="Referencia"/>
+                <field name="motivo"      string="Motivo"/>
 
-                <!-- Filtros predefinidos -->
                 <separator/>
-                <filter name="pendientes"
-                        string="📞 Pendientes"
-                        domain="[('gravedad', '=', 'pendiente')]"/>
-                <filter name="completados"
-                        string="✅ Completados"
-                        domain="[('gravedad', '=', 'completado')]"/>
-                <filter name="cerrados"
-                        string="🔒 Cerrados"
+                <filter name="pendientes_llamar" string="🟠 Pendiente Contactar"
+                        domain="[('gravedad', '=', 'pendiente_llamar')]"/>
+                <filter name="llamados" string="🟢 Contactado"
+                        domain="[('gravedad', '=', 'llamado')]"/>
+                <filter name="cerrados" string="⚫ Cerrado"
                         domain="[('gravedad', '=', 'cerrado')]"/>
+
                 <separator/>
-                <filter name="con_expulsion"
-                        string="🚨 Con Expulsión"
+                <filter name="con_expulsion" string="🚨 Con Expulsión"
                         domain="[('tiene_expulsion', '=', True)]"
                         groups="incidentes.group_parte_manager"/>
-                <filter name="este_anio"
-                        string="Este año"
-                        domain="[('fecha_hora', '&gt;=', (context_today() + relativedelta(month=1, day=1)).strftime('%Y-%m-%d'))]"/>
-                <filter name="hoy"
-                        string="Hoy"
+
+                <separator/>
+                <filter name="etapa_eso"       string="ESO"
+                        domain="[('grupo_id.etapa', '=', 'eso')]"/>
+                <filter name="etapa_bachiller"  string="Bachillerato"
+                        domain="[('grupo_id.etapa', '=', 'bachiller')]"/>
+                <filter name="etapa_fp_basica"  string="FP Básica"
+                        domain="[('grupo_id.etapa', '=', 'fp_basica')]"/>
+                <filter name="etapa_ciclos"     string="Ciclos Formativos"
+                        domain="[('grupo_id.etapa', '=', 'ciclos')]"/>
+
+                <separator/>
+                <filter name="trimestre_1" string="1er Trimestre (Sep–Dic)"
+                        domain="[
+                            ('fecha_hora', '&gt;=', (context_today() + relativedelta(month=9,  day=1)).strftime('%Y-%m-%d')),
+                            ('fecha_hora', '&lt;',  (context_today() + relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))
+                        ]"/>
+                <filter name="trimestre_2" string="2º Trimestre (Ene–Mar)"
+                        domain="[
+                            ('fecha_hora', '&gt;=', (context_today() + relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                            ('fecha_hora', '&lt;',  (context_today() + relativedelta(month=3, day=31)).strftime('%Y-%m-%d'))
+                        ]"/>
+                <filter name="trimestre_3" string="3er Trimestre (Abr–Jun)"
+                        domain="[
+                            ('fecha_hora', '&gt;=', (context_today() + relativedelta(month=4, day=1)).strftime('%Y-%m-%d')),
+                            ('fecha_hora', '&lt;',  (context_today() + relativedelta(month=6, day=30)).strftime('%Y-%m-%d'))
+                        ]"/>
+
+                <separator/>
+                <filter name="hoy" string="Hoy"
                         domain="[('fecha_hora', '&gt;=', context_today().strftime('%Y-%m-%d')),
                                  ('fecha_hora', '&lt;',  (context_today() + relativedelta(days=1)).strftime('%Y-%m-%d'))]"/>
 
-                <!-- Agrupaciones -->
                 <separator/>
                 <group expand="0" string="Agrupar por">
-                    <filter name="grupo_by_grupo"     string="Grupo"          context="{'group_by': 'grupo_id'}"/>
-                    <filter name="grupo_by_alumno"    string="Alumno"         context="{'group_by': 'alumno_id'}"/>
-                    <filter name="grupo_by_profesor"  string="Profesor"       context="{'group_by': 'profesor_id'}"/>
-                    <filter name="grupo_by_gravedad"  string="Estado llamada" context="{'group_by': 'gravedad'}"/>
-                    <filter name="grupo_by_ubicacion" string="Ubicación"      context="{'group_by': 'ubicacion'}"/>
-                    <filter name="grupo_by_mes"       string="Mes"            context="{'group_by': 'fecha_hora:month'}"/>
+                    <filter name="grupo_by_grupo"    string="Grupo"          context="{'group_by': 'grupo_id'}"/>
+                    <filter name="grupo_by_alumno"   string="Alumno"         context="{'group_by': 'alumno_id'}"/>
+                    <filter name="grupo_by_profesor" string="Profesor"       context="{'group_by': 'profesor_id'}"/>
+                    <filter name="grupo_by_gravedad" string="Estado"         context="{'group_by': 'gravedad'}"/>
+                    <filter name="grupo_by_motivo"   string="Motivo"         context="{'group_by': 'motivo'}"/>
+                    <filter name="grupo_by_mes"      string="Mes"            context="{'group_by': 'fecha_hora:month'}"/>
+                    <filter name="grupo_by_trimestre" string="Trimestre"     context="{'group_by': 'fecha_hora:quarter'}"/>
                 </group>
             </search>
         </field>
@@ -56,84 +77,46 @@
 
 
     <!-- ====================================================================
-         VISTA KANBAN – PARTE
+         VISTA KANBAN
     ==================================================================== -->
     <record id="view_parte_kanban" model="ir.ui.view">
         <field name="name">parte.kanban</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="gravedad"
-                    class="o_kanban_small_column"
-                    sample="1">
-
-                <field name="name"/>
+            <kanban default_group_by="gravedad" class="o_kanban_small_column" sample="1">
                 <field name="alumno_id"/>
                 <field name="grupo_id"/>
-                <field name="profesor_id"/>
                 <field name="gravedad"/>
-                <field name="estado"/>
-                <field name="fecha_hora"/>
                 <field name="tiene_expulsion"/>
-                <field name="ubicacion"/>
-
                 <templates>
                     <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_card oe_kanban_global_click
                             #{record.tiene_expulsion.raw_value ? 'border border-danger' : ''}">
-
                             <div class="oe_kanban_content">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <strong class="o_kanban_record_title">
                                         <field name="alumno_id"/>
                                     </strong>
                                     <span t-if="record.tiene_expulsion.raw_value"
-                                          class="badge badge-pill badge-danger">
-                                        🚨 EXPULSIÓN
-                                    </span>
+                                          class="badge badge-pill badge-danger">🚨</span>
                                 </div>
-
                                 <div class="text-muted small">
-                                    <i class="fa fa-users"/> <field name="grupo_id"/>
+                                    Grupo: <field name="grupo_id"/>
                                 </div>
-
-                                <div class="text-muted small">
-                                    <i class="fa fa-map-marker"/> <field name="ubicacion"/>
-                                </div>
-
-                                <div class="text-muted small">
-                                    <i class="fa fa-calendar"/>
-                                    <field name="fecha_hora" widget="date"/>
-                                </div>
-
                                 <hr class="mt-1 mb-1"/>
-
-                                <div class="d-flex justify-content-between">
-                                    <span>
-                                        <field name="estado" widget="badge"
-                                               decoration-info="estado == 'borrador'"
-                                               decoration-warning="estado == 'comunicado'"
-                                               decoration-danger="estado == 'sancionado'"
-                                               decoration-success="estado == 'cerrado'"/>
-                                    </span>
-                                    <span class="text-muted small">
-                                        <i class="fa fa-user-circle"/>
-                                        <field name="profesor_id"/>
-                                    </span>
+                                <div class="text-center">
+                                    <span t-if="record.gravedad.raw_value == 'pendiente_llamar'"
+                                          class="badge badge-warning">🟠 Pendiente Contactar</span>
+                                    <span t-elif="record.gravedad.raw_value == 'llamado'"
+                                          class="badge badge-success">🟢 Contactado</span>
+                                    <span t-else=""
+                                          class="badge badge-secondary">⚫ Cerrado</span>
                                 </div>
                             </div>
-
                             <div class="oe_kanban_footer">
                                 <div class="o_kanban_record_bottom">
                                     <div class="oe_kanban_bottom_left">
                                         <field name="activity_ids" widget="kanban_activity"/>
-                                    </div>
-                                    <div class="oe_kanban_bottom_right">
-                                        <span t-if="record.gravedad.raw_value == 'pendiente'"
-                                              class="badge badge-warning"> Pendiente</span>
-                                        <span t-elif="record.gravedad.raw_value == 'completado'"
-                                              class="badge badge-success"> Completado</span>
-                                        <span t-else=""
-                                              class="badge badge-secondary"> Cerrado</span>
                                     </div>
                                 </div>
                             </div>
@@ -146,35 +129,31 @@
 
 
     <!-- ====================================================================
-         VISTA CALENDARIO – PARTE
+         VISTA CALENDARIO
     ==================================================================== -->
     <record id="view_parte_calendar" model="ir.ui.view">
         <field name="name">parte.calendar</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
-            <calendar string="Calendario de Partes"
-                      date_start="fecha_hora"
-                      color="gravedad"
-                      quick_add="False"
-                      mode="month">
+            <calendar string="Calendario de Partes" date_start="fecha_hora"
+                      color="gravedad" quick_add="False" mode="month">
                 <field name="alumno_id"/>
                 <field name="grupo_id"/>
                 <field name="gravedad"/>
                 <field name="profesor_id"/>
-                <field name="ubicacion"/>
             </calendar>
         </field>
     </record>
 
 
     <!-- ====================================================================
-         VISTAS GRÁFICO – PARTE
+         VISTAS GRÁFICO
     ==================================================================== -->
     <record id="view_parte_graph_gravedad" model="ir.ui.view">
         <field name="name">parte.graph.gravedad</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
-            <graph string="Partes por Estado de Llamada" type="bar" sample="1">
+            <graph string="Partes por Estado" type="bar" sample="1">
                 <field name="gravedad" type="row"/>
                 <field name="grupo_id" type="col"/>
             </graph>
@@ -191,13 +170,24 @@
         </field>
     </record>
 
-    <record id="view_parte_graph_ubicacion" model="ir.ui.view">
-        <field name="name">parte.graph.ubicacion</field>
+    <record id="view_parte_graph_alumno" model="ir.ui.view">
+        <field name="name">parte.graph.alumno</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
-            <graph string="Partes por Ubicación" type="bar" sample="1">
-                <field name="ubicacion" type="row"/>
+            <graph string="Partes por Alumno" type="bar" sample="1">
+                <field name="alumno_id" type="row"/>
                 <field name="gravedad"  type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_parte_graph_profesor" model="ir.ui.view">
+        <field name="name">parte.graph.profesor</field>
+        <field name="model">parte</field>
+        <field name="arch" type="xml">
+            <graph string="Partes por Profesor" type="bar" sample="1">
+                <field name="profesor_id" type="row"/>
+                <field name="gravedad"    type="col"/>
             </graph>
         </field>
     </record>
@@ -206,9 +196,30 @@
         <field name="name">parte.graph.mes</field>
         <field name="model">parte</field>
         <field name="arch" type="xml">
-            <graph string="Evolución mensual de Partes" type="line" sample="1">
+            <graph string="Evolución mensual" type="line" sample="1">
                 <field name="fecha_hora" type="row" interval="month"/>
                 <field name="gravedad"   type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_parte_graph_trimestre" model="ir.ui.view">
+        <field name="name">parte.graph.trimestre</field>
+        <field name="model">parte</field>
+        <field name="arch" type="xml">
+            <graph string="Partes por Trimestre" type="bar" sample="1">
+                <field name="fecha_hora" type="row" interval="quarter"/>
+                <field name="grupo_id"   type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_parte_graph_motivo" model="ir.ui.view">
+        <field name="name">parte.graph.motivo</field>
+        <field name="model">parte</field>
+        <field name="arch" type="xml">
+            <graph string="Partes por Motivo" type="pie" sample="1">
+                <field name="motivo" type="row"/>
             </graph>
         </field>
     </record>
@@ -227,10 +238,10 @@
 
 
     <!-- ====================================================================
-         ACCIONES PARA EL PANEL DE DIRECTIVOS
+         ACCIONES ESTADÍSTICAS
     ==================================================================== -->
     <record id="action_estadisticas_gravedad" model="ir.actions.act_window">
-        <field name="name">📊 Partes por Estado de Llamada</field>
+        <field name="name">📊 Por Estado</field>
         <field name="res_model">parte</field>
         <field name="view_mode">graph,pivot</field>
         <field name="view_id" ref="view_parte_graph_gravedad"/>
@@ -238,18 +249,26 @@
     </record>
 
     <record id="action_estadisticas_grupo" model="ir.actions.act_window">
-        <field name="name">🥧 Partes por Grupo</field>
+        <field name="name">🥧 Por Grupo</field>
         <field name="res_model">parte</field>
         <field name="view_mode">graph,pivot</field>
         <field name="view_id" ref="view_parte_graph_grupo"/>
         <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
 
-    <record id="action_estadisticas_ubicacion" model="ir.actions.act_window">
-        <field name="name">📍 Partes por Ubicación</field>
+    <record id="action_estadisticas_alumno" model="ir.actions.act_window">
+        <field name="name">👤 Por Alumno</field>
         <field name="res_model">parte</field>
         <field name="view_mode">graph,pivot</field>
-        <field name="view_id" ref="view_parte_graph_ubicacion"/>
+        <field name="view_id" ref="view_parte_graph_alumno"/>
+        <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
+    </record>
+
+    <record id="action_estadisticas_profesor" model="ir.actions.act_window">
+        <field name="name">👨‍🏫 Por Profesor</field>
+        <field name="res_model">parte</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="view_id" ref="view_parte_graph_profesor"/>
         <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
 
@@ -261,49 +280,56 @@
         <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
 
-    <record id="action_open_parte_all_views" model="ir.actions.act_window">
-        <field name="name">Gestión de Partes</field>
+    <record id="action_estadisticas_trimestre" model="ir.actions.act_window">
+        <field name="name">📅 Por Trimestre</field>
         <field name="res_model">parte</field>
-        <field name="view_mode">tree,kanban,calendar,graph,pivot,form</field>
-        <field name="search_view_id" ref="view_parte_search"/>
+        <field name="view_mode">graph,pivot</field>
+        <field name="view_id" ref="view_parte_graph_trimestre"/>
+        <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
+    </record>
+
+    <record id="action_estadisticas_motivo" model="ir.actions.act_window">
+        <field name="name">🎯 Por Motivo</field>
+        <field name="res_model">parte</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="view_id" ref="view_parte_graph_motivo"/>
+        <field name="groups_id" eval="[(4, ref('incidentes.group_parte_manager'))]"/>
     </record>
 
 
     <!-- ====================================================================
-         MENÚ ESTADÍSTICAS – solo manager
+         MENÚ ESTADÍSTICAS
     ==================================================================== -->
-    <menuitem id="menu_estadisticas"
-              name="📊 Estadísticas"
-              parent="menu_principal"
-              sequence="5"
+    <menuitem id="menu_estadisticas" name="📊 Estadísticas"
+              parent="menu_principal" sequence="5"
               groups="incidentes.group_parte_manager"/>
 
-    <menuitem id="menu_stats_gravedad"
-              name="Por Estado de Llamada"
-              parent="menu_estadisticas"
-              action="action_estadisticas_gravedad"
-              sequence="1"
-              groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_gravedad"   name="Por Estado"
+              parent="menu_estadisticas" action="action_estadisticas_gravedad"
+              sequence="1" groups="incidentes.group_parte_manager"/>
 
-    <menuitem id="menu_stats_grupo"
-              name="Por Grupo"
-              parent="menu_estadisticas"
-              action="action_estadisticas_grupo"
-              sequence="2"
-              groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_grupo"      name="Por Grupo"
+              parent="menu_estadisticas" action="action_estadisticas_grupo"
+              sequence="2" groups="incidentes.group_parte_manager"/>
 
-    <menuitem id="menu_stats_ubicacion"
-              name="Por Ubicación"
-              parent="menu_estadisticas"
-              action="action_estadisticas_ubicacion"
-              sequence="3"
-              groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_alumno"     name="Por Alumno"
+              parent="menu_estadisticas" action="action_estadisticas_alumno"
+              sequence="3" groups="incidentes.group_parte_manager"/>
 
-    <menuitem id="menu_stats_mes"
-              name="Evolución Mensual"
-              parent="menu_estadisticas"
-              action="action_estadisticas_mes"
-              sequence="4"
-              groups="incidentes.group_parte_manager"/>
+    <menuitem id="menu_stats_profesor"   name="Por Profesor"
+              parent="menu_estadisticas" action="action_estadisticas_profesor"
+              sequence="4" groups="incidentes.group_parte_manager"/>
+
+    <menuitem id="menu_stats_mes"        name="Evolución Mensual"
+              parent="menu_estadisticas" action="action_estadisticas_mes"
+              sequence="5" groups="incidentes.group_parte_manager"/>
+
+    <menuitem id="menu_stats_trimestre"  name="Por Trimestre"
+              parent="menu_estadisticas" action="action_estadisticas_trimestre"
+              sequence="6" groups="incidentes.group_parte_manager"/>
+
+    <menuitem id="menu_stats_motivo"     name="Por Motivo"
+              parent="menu_estadisticas" action="action_estadisticas_motivo"
+              sequence="7" groups="incidentes.group_parte_manager"/>
 
 </odoo>

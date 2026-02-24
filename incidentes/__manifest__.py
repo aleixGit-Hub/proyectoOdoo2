@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Gestión de Partes de Incidentes",
-    'version': '1.5',
+    'version': '1.7',
     'category': 'Educación',
     'author': "Aleix, Jorge y Adam",
     'website': "https://foremp.edu.gva.es/",
-    'summary': 'Gestión de incidencias, partes de expulsión y estadísticas de convivencia',
+    'summary': 'Gestión de incidencias graves, partes de expulsión y estadísticas de convivencia',
     'depends': ['base', 'mail'],
 
     'data': [
@@ -25,6 +25,8 @@
         # 5. Datos precargados (grupos, profesores, alumnos, partes)
         'data/data.xml',
     ],
+
+    'images': ['static/description/icon.png'],
 
     'application': True,
     'installable': True,
